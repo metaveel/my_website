@@ -1,18 +1,17 @@
 ---
-title: "MFA 20222 Pre-programme Assignment"
-author: "Metavee Luangthawornkul"
-date: "9 August 2021"
-output:
-  html_document:
-    theme: flatly
-    highlight: zenburn
-    toc: yes
-    toc_float: yes
-  word_document:
-    toc: yes
-  pdf_document:
-    toc: yes
+categories:  
+- ""    
+- ""
+date: "2021-09-30"
+description: About Me 
+draft: false
+image: spices.jpeg 
+
+keywords: ""
+slug: Metavee_Luangthawornkul 
+title: About Me
 ---
+
 
 ```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
 library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
