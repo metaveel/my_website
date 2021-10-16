@@ -3,9 +3,9 @@ title: "About Me"
 date: '2021-10-15'
 description: About Me
 output: word_document
-image: spices.jpeg
+image: me.jpg
 keywords: ''
-slug: Metavee_Luangthawornkul
+slug: metavee
 categories:
 - ''
 - ''
@@ -32,5 +32,7 @@ I have come to LBS to explore opportunities to be connected with world-renowned 
 
 During my free time, I love to hike and I have been meditating every day for almost 15 years!
 
-![](https://drive.google.com/file/d/1_4vNFjF3rc84TnVWQ5BFjauRCbPdPaQo/view?usp=sharing)
+```{r}
+knitr::include_graphics("/img/me.jpg",error=FALSE)
+```
 

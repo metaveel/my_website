@@ -84,7 +84,7 @@ params:
       - image: about_me.jpg
         subtitle: Hello ! I'm Jenny 
         title: About me
-        url: blogs/Metavee_Luangthawornkul
+        url: blogs/metavee
       - image: pic02.jpg
         subtitle: My Portfolio Return
         title: Risk Return of DJIA Industrial Average
