@@ -90,7 +90,7 @@ params:
         title: Risk Return of DJIA Industrial Average
         url: blogs/risk_return
       - image: pic03.jpg
-        subtitle: Lorem Etiam Nullam
+        subtitle: A day in a life - Private Equity
         title: A Private Equity Analyst in Bangkok
         url: blogs/magna
       - image: pic04.jpg
@@ -102,7 +102,7 @@ params:
         title: Passion.Knowledge.Experience
         url: blogs/ipsum
       - image: dog.jpg
-        subtitle: Feugiat Amet Tempus
+        subtitle: Different breeds, but better together
         title: Myself & The Dogs
         url: blogs/ipsum
   two:
