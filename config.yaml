@@ -6,10 +6,9 @@ googleAnalytics: ''
 disqusShortname: ''
 params:
   banner:
-    buttonText: Get Started
+    buttonText: More about me
     subtitle: |-
-      A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
-      AND RELEASED UNDER THE CREATIVE COMMONS.
+      Hello! WELCOME TO MY PERSONAL BLOG.
     title: Hi, my name is Metavee Luangthawornkul
   blog: {}
   contact:
@@ -86,13 +85,13 @@ params:
         title: About me
         url: blogs/metavee
       - image: pic02.jpg
-        subtitle: My Portfolio Return
-        title: Risk Return of DJIA Industrial Average
+        subtitle: Risk Return of DJIA Stocks
+        title: Dow Jones Industrial Average
         url: blogs/risk_return
       - image: pic03.jpg
-        subtitle: A day in a life - Private Equity
+        subtitle: My biggest achievement
         title: A Private Equity Analyst in Bangkok
-        url: blogs/magna
+        url: blogs/private_equity
       - image: pic04.jpg
         subtitle: EATING WELL IS A FORM OF SELF RESPECT
         title: Food Matters!
