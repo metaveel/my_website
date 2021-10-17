@@ -90,8 +90,8 @@ params:
         url: blogs/risk_return
       - image: pic03.jpg
         subtitle: My biggest achievement
-        title: A Private Equity Analyst in Bangkok
-        url: blogs/private_equity
+        title: My first R assigment 
+        url: blogs/assignment_one
       - image: pic04.jpg
         subtitle: EATING WELL IS A FORM OF SELF RESPECT
         title: Food Matters!
