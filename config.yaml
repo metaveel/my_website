@@ -88,21 +88,21 @@ params:
         subtitle: Risk Return of DJIA Stocks
         title: Dow Jones Industrial Average
         url: blogs/risk_return
-      - image: pic03.jpg
-        subtitle: My biggest achievement
+      - image: pic12.jpg
+        subtitle: Making graph with ggplot
         title: My first R assigment 
         url: blogs/assignment_one
       - image: pic04.jpg
+        subtitle: xxx
+        title: My Second R assigment
+        url: blogs/ipsum
+      - image: pic11.jpg
+        subtitle: My greatest achievement 
+        title: A Private Equity Analyst in Bangkok 
+        url: blogs/private_equity
+      - image: dog.jpg
         subtitle: EATING WELL IS A FORM OF SELF RESPECT
         title: Food Matters!
-        url: blogs/ipsum
-      - image: pic05.jpg
-        subtitle: You've got so much to offfer 
-        title: Passion.Knowledge.Experience
-        url: blogs/ipsumblo
-      - image: dog.jpg
-        subtitle: Different breeds, but better together
-        title: Myself & The Dogs
         url: blogs/ipsum
   two:
     buttonText: Get Started

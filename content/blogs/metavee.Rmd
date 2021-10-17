@@ -5,8 +5,6 @@ description: About Me
 output: word_document
 keywords: ''
 slug: metavee
-image: me.jpg
-image: friend.jpg
   categories:
 - ''
 - ''
