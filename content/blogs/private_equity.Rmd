@@ -6,7 +6,7 @@ output: word_document
 keywords: ''
 slug: private_equity
 image: me.jpg
-  categories:
+categories:
 - ''
 - ''
 draft: no

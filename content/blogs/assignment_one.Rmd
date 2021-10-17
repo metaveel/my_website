@@ -62,7 +62,7 @@ The following graphs are included in my first R assignment I had done with my st
 
 - install the `fivethirtyeight` package and load the drinks dataset.
 
-# Functions
+Functions
 
 data <- read_csv(data.csv) -- import data
 
@@ -74,7 +74,7 @@ alcohol_direct <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/da
 
 **What are the variable types? Any missing values we should worry about?**
 
-# Functions
+Functions
 
 glimpse(data) -- Look at all variables
 skimr::skim(data) -- Skim variables and basic descriptives
@@ -99,7 +99,7 @@ alcohol_direct %>%
 
 ## Making Plots showing alcohol consumption by category
 
-# Functions
+Functions
 
 gglopt() -- make graphs
 
