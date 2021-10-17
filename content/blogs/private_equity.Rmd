@@ -2,7 +2,7 @@
 title: "My Biggest Achievement"
 date: '2021-10-17'
 description: A Private Equity Analyst in Bangkok
-output: word_document
+output: 
 keywords: ''
 slug: private_equity
 image: me.jpg
@@ -11,6 +11,7 @@ categories:
 - ''
 draft: no
 ---
+
 
 
 ```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}

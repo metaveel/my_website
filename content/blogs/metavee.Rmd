@@ -2,7 +2,7 @@
 title: "About Me"
 date: '2021-10-15'
 description: About Me
-output: word_document
+output: 
 keywords: ''
 slug: metavee
 categories:
