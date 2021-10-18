@@ -92,11 +92,11 @@ params:
         subtitle: Making graph with ggplot
         title: My first R assigment 
         url: blogs/assignment_one
-      - image: pic04.jpg
+      - image: pic09.jpg
         subtitle: xxx
         title: My Second R assigment
         url: blogs/assignment_two
-      - image: pic11.jpg
+      - image: pic09.jpg
         subtitle: My greatest achievement 
         title: A Private Equity Analyst in Bangkok 
         url: blogs/private_equity
