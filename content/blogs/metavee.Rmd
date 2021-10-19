@@ -8,6 +8,7 @@ categories:
 - ''
 - ''
 draft: no
+image: me2.jpg
 ---
 
 ```{r setup, echo=FALSE}
@@ -26,9 +27,6 @@ library(here)
 library(janitor)
 ```
 
-```{r, echo=FALSE}
-knitr::include_graphics("/img/blogs/me2.JPG",error =FALSE)
-```
 
 
 ## Metavee Luangthawornkul

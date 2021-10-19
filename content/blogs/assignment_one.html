@@ -19,10 +19,7 @@ title: Risk Return of DJIA Industrial Average
 
 <div id="my-first-r-assigment" class="section level2">
 <h2>My First R Assigment</h2>
-<p>The following graphs are about the performance of DJIA and the methodologies regarding the process to reach each graphs. The work was part of my first R assignment I had done with my study group in Data Analytics for Finance course at LBS.</p>
-</div>
-<div id="returns-of-financial-stocks" class="section level1">
-<h1>Returns of financial stocks</h1>
+<p>The following graphs are about the performance of DJIA and the methodologies regarding the processes to reach each graphs. The work was part of my first R assignment I had done with my study group in Data Analytics for Finance course at LBS.</p>
 <p>We start off by downloading stock data from the New York Stock Exchange:</p>
 <pre class="r"><code>nyse &lt;- read_csv(here::here(&quot;data&quot;,&quot;nyse.csv&quot;))</code></pre>
 <p>Then we create a table and a bar plot that shows the number of companies per sector, in descending order:</p>
@@ -244,7 +241,7 @@ myStocks_returns_annual &lt;- myStocks %&gt;%
                type       = &quot;arithmetic&quot;,
                col_rename = &quot;yearly_returns&quot;,
                cols = c(nested.col))</code></pre>
-<p><strong>Creating a table summarizing monthly returns for each of the stocks and <code>SPY</code></strong></p>
+<p>Creating a table summarizing monthly returns for each of the stocks and <code>SPY</code></p>
 <pre class="r"><code>myStocks_returns_monthly %&gt;% #We take the relevant dataset.
   group_by(symbol) %&gt;% #We group the stocks by symbol.
   summarise(min=min(monthly_returns),max=max(monthly_returns),median=median(monthly_returns),mean=mean(monthly_returns),sd=sd(monthly_returns)) %&gt;% #We summarise to obtain the minimum, maximum, median, mean and standard deviation of monthly returns.
@@ -898,13 +895,12 @@ BA
 </tr>
 </tbody>
 </table>
-<div id="density-plot-for-each-stock" class="section level2">
-<h2>Density plot for each stock</h2>
-<p><strong>Creating a density plot, using <code>geom_density()</code>, for each of the stocks</strong></p>
+<p><strong>Density plot for each stock</strong></p>
+<p>Creating a density plot, using <code>geom_density()</code>, for each of the stocks</p>
 <pre class="r"><code>myStocks_returns_monthly %&gt;% #We take the relevant dataset.
   group_by(symbol) %&gt;% #We group the stocks by symbol.
   ggplot(aes(x = monthly_returns)) + #We define the x-axis of our density plots.
-  geom_density(aes(colour = symbol), alpha = 1) + #We create our density plots.
+  geom_density(aes(colour = symbol,alpha = 1)) + #We create our density plots.
   facet_wrap(vars(symbol)) #We create a density plot for each stock symbol.</code></pre>
 <p><img src="/blogs/assignment_one_files/figure-html/density_monthly_returns-1.png" width="648" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>myStocks_returns_monthly %&gt;% #We take the relevant dataset.
@@ -1370,10 +1366,8 @@ VZ
 </table>
 <p><strong>What can we infer from this plot and which stock is the riskiest/least risky?</strong></p>
 <p>From this plot and a table ranking the stock by the standard deviation of their monthly returns, we can see that the stock BA is the riskiest, whereas the stock VZ is the least risky.</p>
-</div>
-<div id="plotting-expected-return-and-standard-deviation" class="section level2">
-<h2>Plotting expected return and standard deviation</h2>
-<p><strong>Plot that shows the expected monthly return (mean) of a stock on the Y axis and the risk (standard deviation) in the X-axis</strong></p>
+<p><strong>Plotting expected return and standard deviation</strong></p>
+<p>Plot that shows the expected monthly return (mean) of a stock on the Y axis and the risk (standard deviation) in the X-axis</p>
 <pre class="r"><code># YOUR CODE GOES HERE
 myStocks_returns_monthly %&gt;%
 group_by(symbol) %&gt;%
@@ -1397,5 +1391,4 @@ NULL</code></pre>
 <p><img src="/blogs/assignment_one_files/figure-html/risk_return_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
 <p><strong>What can you we infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?</strong></p>
 <p>The graph plots each stock’s standard deviations against their expected returns. The stocks in the fourth quadrant (bottom right) of the graph have both the highest SD, hence the highest beta, and the lowest historic returns. We would expect these stocks to be poor investments, as they are those that bear the highest risk and the lowest expected returns.</p>
-</div>
 </div>

@@ -54,9 +54,7 @@ library(rvest) # to scrape wikipedia page
 
 ## My First R Assigment 
 
-The following graphs are about the performance of DJIA and the methodologies regarding the process to reach each graphs. The work was part of my first R assignment I had done with my study group in Data Analytics for Finance course at LBS.
-
-# Returns of financial stocks
+The following graphs are about the performance of DJIA and the methodologies regarding the processes to reach each graphs. The work was part of my first R assignment I had done with my study group in Data Analytics for Finance course at LBS.
 
 We start off by downloading stock data from the New York Stock Exchange:
 
@@ -187,7 +185,7 @@ myStocks_returns_annual <- myStocks %>%
 
 
 
-**Creating a table summarizing monthly returns for each of the stocks and `SPY`**
+Creating a table summarizing monthly returns for each of the stocks and `SPY`
 
 ```{r summarise_monthly_returns, cache=TRUE}
 myStocks_returns_monthly %>% #We take the relevant dataset.
@@ -200,16 +198,15 @@ myStocks_returns_monthly %>% #We take the relevant dataset.
 
 ```
 
+**Density plot for each stock**
 
-## Density plot for each stock
-
-**Creating a density plot, using `geom_density()`, for each of the stocks**
+Creating a density plot, using `geom_density()`, for each of the stocks
 
 ```{r density_monthly_returns, cache=TRUE}
 myStocks_returns_monthly %>% #We take the relevant dataset.
   group_by(symbol) %>% #We group the stocks by symbol.
   ggplot(aes(x = monthly_returns)) + #We define the x-axis of our density plots.
-  geom_density(aes(colour = symbol), alpha = 1) + #We create our density plots.
+  geom_density(aes(colour = symbol,alpha = 1)) + #We create our density plots.
   facet_wrap(vars(symbol)) #We create a density plot for each stock symbol.
 
 myStocks_returns_monthly %>% #We take the relevant dataset.
@@ -228,10 +225,9 @@ myStocks_returns_monthly %>% #We take the relevant dataset.
 From this plot and a table ranking the stock by the standard deviation of their monthly returns, we can see that the stock BA is the riskiest, whereas the stock VZ is the least risky.
 
 
+**Plotting expected return and standard deviation**
 
-## Plotting expected return and standard deviation
-
-**Plot that shows the expected monthly return (mean) of a stock on the Y axis and the risk (standard deviation) in the X-axis**
+Plot that shows the expected monthly return (mean) of a stock on the Y axis and the risk (standard deviation) in the X-axis
 
 ```{r risk_return_plot, cache=TRUE}
 # YOUR CODE GOES HERE
