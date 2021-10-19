@@ -3,13 +3,13 @@ categories:
 - ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
 - ""
 date: "2021-10-17"
-description: My R assignment 2 
+description: Excess rentals in Transport for London bike sharing 
 draft: false
 image: spices.jpeg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
 
 keywords: ""
 slug: assignment_two 
-title: My R assignment 2
+title: Excess rentals in Transport for London bike sharing
 ---
 
 
@@ -49,268 +49,14 @@ library(tidyquant)
 
 ```
 
+```{r, echo=FALSE}
+knitr::include_graphics("/img/blogs/bike.JPG",error =FALSE)
+```
+
 # My Second R Assigment 
 
-The following graphs are included in my second R assignment I had done with my study group. 
- 1) Alcohol consumption by countries : Beer, Wine, and Spirit
- 2) Biden's Approval Margins
- 3) Transport for London bike sharing 
- 4) Chang in the US CPI and its components over the period
+The following graphs are about the excess rentals (the difference between actual rental and expected rental) in Transport for London ("TFL") bike sharing during 2016 to 2021
 
-
-
-# Climate change and temperature anomalies 
-
-## Getting the data in the right format
-Loading Combined Land-Surface Air and Sea-Surface Water Temperature Anomalies in the Northern Hemisphere from [NASA's Goddard Institute for Space Studies](https://data.giss.nasa.gov/gistemp)
-
-```{r weather_data, cache=TRUE}
-
-weather <- 
-  read_csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/NH.Ts+dSST.csv", 
-           skip = 1, 
-           na = "***") #loading the weather data set, skipping the first row and defining the encoding for missing variables 
-
-```
-
-Creating a long-format dataframe 'tidyweather' with the year and month variables from 'weather'
-
-```{r tidyweather, cache=TRUE}
-
-tidyweather<-weather %>%
-  select(Year:Dec) %>% #selecting the year and the months to make a long table
-  pivot_longer(cols = 2:13, #using the the columns 2 to 13 to make a long table
-               names_to = "Month",
-               values_to = "delta") 
-
-```
-
-The 'tidyweather' dataframe has three variables: year, month, and delta which represents temperature deviation 
-
-## Time-series scatter plot
-We use the mutate function to create a 'date' variable to plot the data chronologically. Then we create a time-series scatter plot with a trendline. 
-
-```{r scatter_plot, cache=TRUE}
-
-tidyweather <- tidyweather %>%
-  mutate(date = ymd(paste(as.character(Year), Month, "1")), #using the mutate to create a new variable and to split the date between years and month 
-         month = month(date),label=TRUE,
-         year = year(date))
-
-ggplot(tidyweather, aes(x=date, y = delta))+
-  geom_point()+ #plotting the deltas for each month over time
-  geom_smooth(color="red") + #adding a red trendline
-  theme_bw() +
-  labs (
-    title = "Weather Anomalies")
-
-```
-
-The scatterplot show that temperature anomalies has been has been steadily increasing from the 1950-1980s base period, particularly in after the 1970s. The overall data shows that the temperature anomalies represent higher temperature after the 1950s and lower before 1950s.  
-
-## Time-series scatter plot grouped by month
-
-In the next chart, we are using `facet_wrap()` to investigate whether the effect of increasing temperature is more pronounced in particular months. 
-
-```{r facet_wrap, cache=TRUE}
-
-ggplot(tidyweather,aes(x=date,y=delta))+
-  geom_point()+
-  facet_wrap(~fct_reorder(Month, date))+ #faceting the deltas for each month and order each month in chronological order
-  geom_smooth(color="red") + #adding a line that averages the datapoints and colour it in red
-  theme_bw() + #setting a more readable theme
-  labs(title="Weather Anomalies Per Month")
-
-```
-
-By grouping the 'tidyweather' data by month and creating a scatter plot with trend lines, we see that all months show increasing temperature deviations. An interesting observation is that the temperature deviations are closer to each other for certain months and show a higher year on year variability for other months. December to February shows a high variability from year to year whereas the year on year variations for May to September show less variability. In more recent years, we also see that the months December to February show the highest anomalies. 
-
-## Density plot grouped by time-periods
-we create a new data frame 'comparison' where we group the data into five different time periods: 1881-1920, 1921-1950, 1951-1980, 1981-2010 and 2011-present. 
-
-```{r intervals, cache=TRUE}
-
-comparison <- tidyweather %>% 
-  filter(Year>= 1881) %>% #remove years prior to 1881
-  #create new variable 'interval', and assign values based on criteria below:
-  mutate(interval = case_when(
-    Year %in% c(1881:1920) ~ "1881-1920",
-    Year %in% c(1921:1950) ~ "1921-1950",
-    Year %in% c(1951:1980) ~ "1951-1980",
-    Year %in% c(1981:2010) ~ "1981-2010",
-  TRUE ~ "2011-present"))
-
-```
-
-
-We are creating a density plot to study the distribution of monthly deviations
-
-```{r density_plot, cache=TRUE}
-
-ggplot(comparison, aes(x=delta, fill=interval))+ #using fill to color the intervals
-  geom_density(alpha=0.2) +   #density plot with tranparency set to 20%
-  theme_bw() +                #theme
-  labs (
-    title = "Density Plot for Monthly Temperature Anomalies",
-    y     = "Density") #changing y-axis label to sentence case
-
-```
-
-The density plot shows us that the temperature deviations have been higher in more recent years, indicated by the '1981-2010' and '2011-present' distributions having higher median's and the majority of observations being higher than the other intervals. The density plot also shows us that the temperature deviations are more spread out in the more recent distributions, indicating higher temperature variability compared to the base and older years. 
-
-## Scatter plot of average annual anomalies
-We are creating a scatter plot with a trendline to show average annual anomalies
-
-```{r averaging, cache=TRUE}
-
-#creating yearly averages
-average_annual_anomaly <- tidyweather %>% 
-  group_by(Year) %>%   #grouping data by Year
-  # creating summaries for mean delta 
-  # use `na.rm=TRUE` to eliminate NA (not available) values 
-  summarise(annual_average_delta=mean(delta,na.rm=TRUE))
-
-#plotting the data:
-ggplot(average_annual_anomaly, aes(x=Year, y= annual_average_delta))+
-  geom_point()+
-  #Fit the best fit line, using LOESS method
-  geom_smooth() +
-  #change to theme_bw() to have white background + black frame around plot
-  theme_bw() +
-  labs (
-    title = "Average Yearly Anomaly",
-    y     = "Average Annual Delta")                         
-
-```
-
-The scatter plot of average annual temperature anomalies reaffirms our observations about an increase in temperature in more recent time compared to the base between '1951-1980'.  
-
-## Confidence Interval for `delta`
-We are constructing a confidence interval for the average annual delta between '2011-present' in two ways. Using a formula and using a bootstrap simulation with the `infer` package. 
-
-First we will construct the confidence interval using a formula: 
-
-```{r calculate_CI_using_formula, cache=TRUE}
-
-formula_ci <- comparison %>% 
-  na.omit()%>%
-  filter(interval=="2011-present") %>% #chossing the interval 2011-present with the filter function
-  summarise(mean_delta=mean(delta), #using the summarise function to compute the statistics we need (mean, SD, count, SE, lower/upper 95% CI)
-            sd_delta=sd(delta),
-            count=n(),
-            se_delta=sd(delta)/sqrt(count),
-            t_critical=qt(0.975,count-1),
-            margin_of_error=t_critical*se_delta,
-            lower_ci_95=mean_delta-t_critical*se_delta,
-            higher_ci_95=mean_delta+t_critical*se_delta) #calculating summary statistics for temperature deviation (delta) 
-formula_ci #displaying the formula
-
-```
-
-Our confidence interval calculated using the formula is saved to 'formula_ci'. The lower 5th percentile mark is 1.01 degrees, the higher 95th percentile is 1.11 and our mean temperature anomaly is 1.06. 
-
-Then we also try to construct the same confidence interval using the bootstrap method. 
-
-```{r calculate_CI_using_bootstrap, cache=TRUE}
-
-set.seed(1) #setting a seed to ensure consistency
-
-bootstrap_ci <- comparison %>%  
-  filter(interval=="2011-present")%>% #filtering to choose the interval 2011-present
-  specify(response=delta) %>% #using the specify function for the point estimate delta
-  generate(reps=1000,type="bootstrap")%>% #running the formula 1,000 times
-  calculate(stat="mean") %>% #calculating the mean
-  get_confidence_interval(level=0.95, type= "percentile")
-
-bootstrap_ci #showing bootstrap_CI
-
-```
-
-Our confidence interval from the bootstrap method is saved to 'bootstrap_ci'. We have the same lower and upper confidence interval at 1.01 and 1.11 respectively. 
-
-## Conclusion
-The data shows us that the temperature anomalies are higher and more distributed in later years compared to the base between 1950-1980 and years before the base, pre-1950s. It also showed us that the temperature anomaly distribution is more spread out in the months December to February. According to [NASA](https://earthobservatory.nasa.gov/world-of-change/decadaltemp.php) 
-
-> A one-degree global change is significant because it takes a vast amount of heat to warm all the oceans, atmosphere, and land by that much. In the past, a one- to two-degree drop was all it took to plunge the Earth into the Little Ice Age.
-
-Our 95% confidence interval indicates that the mean of temperature anomalies is likely to be above 1 degree. This is scary because it means global warming is happening and that the shift in temperatures is significant. The data shows that the current average deviation from the mean temperature is 1.01 degree increase in our lower confidence interval and 1.11 in the higher. 
-
-
-
-# Biden's Approval Margins
-
-## Downloading and cleaning data
-The date variables are given as characters and need to be formatted as dates
-
-```{r load_poll, cache=TRUE}
-# Import approval polls data directly off fivethirtyeight website
-approval_polllist <- read_csv('https://projects.fivethirtyeight.com/biden-approval-data/approval_polllist.csv') 
-
-glimpse(approval_polllist) #taking a look at the data
-
-#using `lubridate` to fix dates, as they are given as characters.
-approval_polllist$modeldate<-mdy(approval_polllist$modeldate)
-approval_polllist$startdate<-mdy(approval_polllist$startdate)
-approval_polllist$enddate<-mdy(approval_polllist$enddate)
-approval_polllist$createddate <-mdy(approval_polllist$createddate )
-approval_polllist$timestamp   <-as_datetime(approval_polllist$createddate )
-glimpse(approval_polllist) #checking that it was fixed
-```
-
-## Create a plot
-We are creating a plot showing Joe Biden's net approval margin over time alond with its 95% confidence interval.
-
-
-```{r poll_plot, cache=TRUE}
-  
-approval_polllist_ci<-approval_polllist %>%
-  mutate(week_of_the_year=week(enddate),net_approval_rate=approve-disapprove)%>% #calculating the net approval rating
-  filter(subgroup=="All polls") %>% #filtering for all polls
-  group_by(week_of_the_year)%>% #grouping by week
-  summarize(average_net_approval_rate=mean(net_approval_rate),
-            sd_net_approval_rate=sd(net_approval_rate),
-            count=n(),
-            se_net_approval_rate=sd_net_approval_rate/sqrt(count),
-            t_critical=qt(0.975,count-1),
-             margin_of_error=t_critical*se_net_approval_rate,
-            lower_ci_95=average_net_approval_rate-t_critical*se_net_approval_rate,
-            higher_ci_95=average_net_approval_rate+t_critical*se_net_approval_rate,
-            na.rm=TRUE) %>% #calculating the confidence intervals for each week
-  ggplot(aes(x=week_of_the_year,y=average_net_approval_rate))+ #building the plot
-  geom_point(colour="red3",size=0.2,xlim=40)+ #plotting each data point
-  geom_line(colour="red3",size=0.1)+ #adding a line that links the data points
-  theme_bw()+
-  geom_smooth(se=FALSE,legend.position=NA,colour="blue",size=0.4)+ #adding a trendline
-  geom_ribbon(aes(ymin=lower_ci_95,ymax=higher_ci_95),colour="red3",alpha=0.1,linetype="dashed",size=0.1)+ #colouring the CI
-  geom_hline(aes(yintercept=0),size=0.8,colour="orange")+ #adding a horizontal line on the y=0 axis
-  theme(legend.position = "none", #setting a more easily readable theme
-        legend.background=element_blank(),
-        plot.title=element_text(size=10,face="bold"),
-        axis.ticks=element_blank(),
-        axis.text=element_text(size=5),
-        strip.text=element_text(size=6),
-        axis.title=element_text(size=6,face="bold"),
-        plot.subtitle=element_text(size=8,face="bold"),
-        panel.border = element_blank(),
-        aspect.ratio=1377/2500)+
-  scale_y_continuous(expand = c(0, 1), breaks= seq(-15,10,by=2.5),limits=c(-15,40))+ #setting y-axis boundaries to make the data more readable
-  scale_x_continuous(expand = c(0, 0),breaks= seq(0,40,by=13),limits=c(1,40))+ #setting x-axis boundaries to make the data more readable
-    labs(title="Estimating Approval Margin (Approve - Disapprove) for Joe Biden", 
-       subtitle="Weekly Average of All Polls",
-       x="Week of the year", 
-       y="Average Approval Margin (approve-disapprove)")+
-  annotate("text",x=20,y=40,label="2021",size=2)
-
-approval_polllist_ci #printing to view the plot
-
-```
-
-## Compare Confidence Intervals
-
-The confidence intervals for `week 3` is very wide compared to the other weeks, whereas the confidence interval for `week 25` is narrower. The reason the confidence interval for week 3 is wide is because it is the first week we have data for and our data starts in the middle of the week. Week 3 in 2021 was from 18-24. January. The 'enddate' variable from the data set that we use to plot the weeks only starts from January 21st. Therefore, we believe the number of data points in week 3 to be much lower than in other weeks, leading to a wider confidence interval. 
-
-
-# Challenge 1: Excess rentals in Transport for London bike sharing
 
 ## Downloading and cleaning data
 We download the latest TFL data and read it as a dataframe. Then we change the date variables to get year, month and week. 
@@ -340,7 +86,9 @@ bike <- bike0 %>%
 Looking at the facet grid chart with the number of bikes hired by month and year, we see a much smaller peak in May and June 2020 compared to previous years. What we see is that number of days with a high number of rentals, aprx. 30-50k is much less than previous years. The number of bikes rented each day is much more inconsistent and varies along the entire spectrum. This is a result of COVID lockdown, where bike usage patterns changed. We see that the rentals take up again in July, when lockdown was lifted, and the distribution starts to normalize.  
 
 ## Reproducing graphs
+We will reproduce the following two graphs.
 
+We are creating the first plot:
 ```{r tfl_plot_1, cache=TRUE}
 data_bike <-bike %>%
   group_by(month,year) %>% #grouping by month and year
@@ -384,6 +132,7 @@ and calculated between 2016-2019",
 
 
 We are creating the second plot:
+
 ```{r tfl_plot_2, cache=TRUE}
 df4 <-bike %>%
   group_by(year,week) %>% #grouping by month
@@ -436,98 +185,5 @@ calculated between 2016-2019",
 We use mean because we are looking at normal distributions. The mean is often heavily influenced by outliers, however, our data does not contain outliers. The median is usually used for skewed distributions or data with many outliers. The expected outcome value is often referred to as the “long-term” average or mean. Over the long term of doing sampling over and over, you would expect this average. 
 
 
-# Challenge 2: How has the CPI and its components changed over the last few years?
 
-
-## Cleaning/modifying data and building chart
-we had some issues pulling data directly from the FED so we downloaded an excel file instead. 
-
-```{r cpi_plot, cache=TRUE}
-
-#using dataset given in github under "data" file holder
-cpi<-read_csv((here::here("data", "cpi_data.csv")))
-
-#cleaning up the data and choosing the correct component title's to display
-start <- "Consumer Price Index for All Urban Consumers: "
-end <- " in U.S. City Average"
-
-new_title<-cpi$title
-
-for(i in 1:18782){
-  cpi[i,4] <- strsplit(strsplit(new_title[i], start)[[1]][2], end)[[1]][1]
-}
-
-cpi_new<-cpi%>%
-  mutate(date=ymd(date),
-         year=year(date),
-         year_change = value/lag(value, 12) - 1,)%>% #calculating the YoY change
-  select(component,date,year,value,title,year_change) %>% #selecting the columns we will analyse
-  filter(year>2015) #filtering for the years after 2015
-  
-cpi_new_2<-cpi_new%>%
-  mutate(positive=ifelse(year_change> 0, 1, -1)) #creating a column to differentiate positive YoY changes vs negative YoY changes
-
-cpi_new_3<-cpi_new%>%
-  select(year_change,title) %>% #selecting the columns we will analyse
-  group_by(title)%>% #grouping by titles
-  filter(title!="All Items") %>% #putting "All Items" first
-  arrange(desc(year_change))%>% #arrange by descening order of YoY change
-  select(title)%>%
-  distinct()
- 
-component_order<-c("All Items",as.character(cpi_new_3$title))
-
-ggplot(cpi_new_2,aes(x=date,y=year_change,color=as.factor(positive)))+
-   geom_point(size=0.2)+ #plotting the YoY changes
-   scale_color_manual(values=c('blue2','red'))+ #colouring positive YoY changes in blue and negative YoY changes in red
-   geom_smooth(size=0.2,colour="grey",se=FALSE)+
-   theme_bw()+ #setting a theme for increases readibility
-   theme(legend.position = "none",
-        legend.background=element_blank(),
-        plot.title=element_text(size=6,face="bold"),
-        axis.ticks=element_blank(),
-        axis.text=element_text(size=4),
-        strip.text=element_text(size=4),
-        axis.title=element_text(size=4,face="bold"),
-        plot.subtitle=element_text(size=4),
-        plot.caption = element_text(size=4),
-        plot.background = element_blank(),
-        panel.border = element_rect(colour="black"))+
-   labs(title="Yearly change of US CPI (All Items) and its components",
-        subtitle= "<span style = 'font-size:12pt'>YoY change being <span style = 'color: orangered;'>positive</span> and <span style = 'color:       steelblue1;'>negative</span><br>Jan 2016 to Aug 2021",
-         y="Yoy % Change",x="",
-        caption="Data from St. Louis Fed FRED
-        https://fredaccount.stlouisfed/org/public/datalist/843")+
-   scale_y_continuous(labels = scales::percent)+ #setting a scale in percent for increased readibility
-   facet_wrap(~fct_relevel(title,component_order),scales="free") #faceting by CPI componenent and setting the scale free to maximize the area on which the YoY changes are displayed
-
-```
-
-Creating a new plot with the 7 key components: 
-
-```{r cpi_plot_7_key_components, cache=TRUE}
-ggplot(subset(cpi_new_2,title %in% c("Housing","Transportation", "Food and Beverages","Medical Care", "Education and Communication", "Recreation", "Apparel")),aes(x=date,y=year_change,color=as.factor(positive)))+
-   geom_point(size=0.2)+
-  scale_color_manual(values=c('blue2','red'))+
-   geom_smooth(size=0.2,colour="grey",se=FALSE)+
-   theme_bw()+
-   theme(legend.position = "none",
-        legend.background=element_blank(),
-        plot.title=element_text(size=6,face="bold"),
-        axis.ticks=element_blank(),
-        axis.text=element_text(size=4),
-        strip.text=element_text(size=4),
-        axis.title=element_text(size=4,face="bold"),
-        plot.subtitle=element_text(size=4),
-        plot.caption = element_text(size=4),
-        plot.background = element_blank(),
-        panel.border = element_rect(colour="black"))+
-   labs(title="Yearly change of US CPI 7 key components",
-        subtitle = "<span style = 'font-size:12pt'>YoY change being <span style = 'color: orangered;'>positive</span> and <span style = 'color:       steelblue1;'>negative</span><br>Jan 2016 to Aug 2021",
-         y="Yoy % Change",x="",
-        caption="Data from St. Louis Fed FRED
-        https://fredaccount.stlouisfed/org/public/datalist/843")+
-   scale_y_continuous(labels = scales::percent)+
-  facet_wrap(~title,scales="free")
-```
 

@@ -8,14 +8,14 @@ params:
   banner:
     buttonText: More about me
     subtitle: |-
-      Hello! WELCOME TO MY PERSONAL BLOG.
-    title: Hi, my name is Metavee Luangthawornkul
+      HELLO WELCOME TO MY PERSONAL BLOG.
+    title: Hi, my name is Metavee(Jenny)Luangthawornkul
   blog: {}
   contact:
     address:
-      - city: London
+      - city: London NW1 4SA
         country: United Kingdom
-        street: Brown Street
+        street: Regent's Park
         title: Address
     buttonClear: Clear
     buttonSend: Send message
@@ -60,7 +60,7 @@ params:
   name: Your name
   navigation:
     button1:
-      - name: Get Started
+      - name: More about me
         url: blogs
     button2:
       - name: Log In
@@ -80,34 +80,33 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: about_me.jpg
-        subtitle: Hello ! I'm Jenny 
+      - image: pic08.jpg
+        subtitle: Hello! I'm Jenny
         title: About me
         url: blogs/metavee
-      - image: pic02.jpg
-        subtitle: Risk Return of DJIA Stocks
-        title: Dow Jones Industrial Average
-        url: blogs/risk_return
-      - image: pic12.jpg
-        subtitle: Making graph with ggplot
-        title: My first R assigment 
+      - image: pic15.jpg
+        subtitle: My first R assignment -  making graph with ggplot
+        title: Risk Return of DJIA Industrial Average
         url: blogs/assignment_one
-      - image: pic09.jpg
-        subtitle: xxx
-        title: My Second R assigment
+      - image: pic07.jpg
+        subtitle: My second R assignment -  a more beautiful graph with geom_ribbon
+        title: Excess rentals in Transport for London bike sharing
         url: blogs/assignment_two
-      - image: pic09.jpg
+      - image: pic04.jpg
+        subtitle: Nisl Sed Aliquam
+        title: Ipsum
+        url: blogs/ipsum
+      - image: pic05.jpg
         subtitle: My greatest achievement 
         title: A Private Equity Analyst in Bangkok 
         url: blogs/private_equity
-      - image: dog.jpg
-        subtitle: EATING WELL IS A FORM OF SELF RESPECT
+      - image: pic06.jpg
+        subtitle: Eating well is a form of self respect
         title: Food Matters!
         url: blogs/ipsum
   two:
-    buttonText: Get Started
+    buttonText: Thank you!
     enable: yes
-    subtitle: "A beautiful day begins with a beautiful mindset"
-    title: This is all about myself 
-    image: sunrise.jpg
+    subtitle: "a beautiful day starts with a beautiful mindset"
+    title: Thank you!
     url: blogs

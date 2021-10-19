@@ -3,13 +3,13 @@ categories:
 - ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
 - ""
 date: "2021-10-17"
-description: My R assignment 1 
+description: Risk Return of DJIA Industrial Average
 draft: false
-image: spices.jpeg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
+image: DJIA.jpeg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
 
 keywords: ""
 slug: assignment_one 
-title: My R assignment 1
+title: Risk Return of DJIA Industrial Average
 ---
   
 
@@ -50,149 +50,24 @@ library(tidyquant)
 library(rvest) # to scrape wikipedia page
 ```
 
-# My First R Assigment 
-
-The following graphs are included in my first R assignment I had done with my study group. 
- 1) Alcohol consumption by countries : Beer, Wine, and Spirit
- 2) The performance of DJIA and SPY
- 3) The relationship between CPI and 10 Year Treasury Rate 
- 4) Opinion polls on German 2021 Election
-
-# Where Do People Drink The Most Beer, Wine And Spirits?
-
-- install the `fivethirtyeight` package and load the drinks dataset.
-
-Functions
-
-data <- read_csv(data.csv) -- import data
-
-```{r load_alcohol_data, cache=TRUE}
-library(fivethirtyeight)
-alcohol_direct <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/alcohol-consumption/drinks.csv") 
+```{r, echo=FALSE}
+knitr::include_graphics("/img/blogs/DJIA.JPG",error =FALSE)
 ```
 
 
-**What are the variable types? Any missing values we should worry about?**
+## My First R Assigment 
 
-Functions
-
-glimpse(data) -- Look at all variables
-skimr::skim(data) -- Skim variables and basic descriptives
-
-# Assumptions
-
-1. There are two variable types: character and numerical double.
-2. Some countries seem to do not have official alcohol consumption data. 
-
-```{r glimpse_skim_data, cache=TRUE}
-glimpse(alcohol_direct)
-skimr::skim(alcohol_direct)
-
-#looking closer at countries with missing data or low alcohol consumption
-alcohol_direct %>%
-  filter(total_litres_of_pure_alcohol<1) %>%
-  group_by(country) %>%
-  summarize(beer_servings,spirit_servings,wine_servings,total_litres_of_pure_alcohol)%>%
-  arrange(total_litres_of_pure_alcohol)
-```
-
-
-## Making Plots showing alcohol consumption by category
-
-Functions
-
-gglopt() -- make graphs
-
-**Top 25 beer consuming countries**
-
-```{r beer_plot, cache=TRUE}
-# YOUR CODE GOES HERE
-
-alcohol_direct %>% #We take the data set.
-  slice_max(order_by = beer_servings, n=25) %>%  #We sort the number of beer servings for the first 25 countries.
-  ggplot(aes(x = beer_servings, y = fct_reorder(country, beer_servings))) + #We plot the number of beer servings for the first 25 countries in descending order.
-  geom_col()+ #We make a column graph.
-  theme_bw()+ #We format it to make it more easily readable.
-  labs(
-    title = "Top 25 Beer consuming countries",
-    x = "Beer servings per capita",
-    y = NULL
-  )+
-  
-#Finally, we format the main title, the axes' titles and the axes' text to make the chart more easily readable.
-theme(plot.title = element_text(size = 14, face = "bold", hjust=.5), 
-      axis.text=element_text(size=10), 
-      axis.title.x = element_text(size = 12, angle = 0)) +
-  NULL
-```
-
-
-
-**Top 25 wine consuming countries**
-
-```{r wine_plot, cache=TRUE}
-
-# YOUR CODE GOES HERE
-
-alcohol_direct %>% #We take the data set.
-  slice_max(order_by = wine_servings, n=25) %>% #We sort the number of wine servings for the first 25 countries.
-  ggplot(aes(x = wine_servings, y = fct_reorder(country, wine_servings))) + #We plot the number of wine servings for the first 25 countries in descending order.
-  geom_col()+ #We make a column graph.
-  theme_bw()+ #We format it to make it more easily readable.
-  labs(
-    title = "Top 25 Wine consuming countries",
-    x = "Wine servings per capita",
-    y = NULL
-  )+
-  
-#Finally, we format the main title, the axes' titles and the axes' text to make the chart more easily readable.
-theme(plot.title = element_text(size = 14, face = "bold", hjust=.5), 
-      axis.text=element_text(size=10), 
-      axis.title.x = element_text(size = 12, angle = 0)) +
-  NULL
-```
-
-
-**Top 25 spirit consuming countries**
-
-```{r spirit_plot, cache=TRUE}
-# YOUR CODE GOES HERE
-
-alcohol_direct %>% #We take the data set
-  slice_max(order_by = spirit_servings, n=25) %>% #We sort the number of spirit servings for the first 25 countries
-  ggplot(aes(x = spirit_servings, y = fct_reorder(country, spirit_servings))) + #We plot the number of spirit servings for the first 25 countries in descending order.
-  geom_col()+ #We make a column graph.
-  theme_bw()+ #We format it to make it more easily readable.
-  labs(
-    title = "Top 25 Spirit consuming countries",
-    x = "Spirit servings per capita",
-    y = NULL
-  )+
-  
-#Finally, we format the main title, the axes' titles and the axes' text to make the chart more easily readable.
-theme(plot.title = element_text(size = 14, face = "bold", hjust=.5), 
-      axis.text=element_text(size=10), 
-      axis.title.x = element_text(size = 12, angle = 0)) +
-  NULL
-```
-
-**What we can infer from these plots**
-
-From these graphs, we can see that consumption habits vary by country. Muslim countries logically do not have any alcohol consumption. Western European countries tend to consume more wine per capita, whereas Eastern European countries tend to consume more beer per capita. Spirit consumption per capita is more important in South American countries. These differences are probably mainly explained by cultural and geographical factors: the climate of countries such as Italy, France or Spain are more suitable for wine production, whereas the climate of Eastern European countries or Asian countries is more suitable to beer production. Spirit production is less dependent on climate conditions: this explains why spirits are consumed worldwide in countries which have very different climates (e.g. Grenada, Russia).
-
-Some countries have missing data or report 0 alcohol consumption. These countries are primarily muslim countries, where alcohol consumption might be banned by law. While alcohol consumption is banned, it does not nessecarily mean that it does not exist, it just might happen behind closed doors. Therefore, this data might fail to capture the real level of alcohol consumption accurately in some of these countries. Additionally, in some muslim countries, alcohol consumption is legal for the non-muslim population, which could explain the low reported per capita level of alcohol consumption. 
-
-
+The following graphs are about the performance of DJIA and the methodologies regarding the process to reach each graphs. The work was part of my first R assignment I had done with my study group in Data Analytics for Finance course at LBS.
 
 # Returns of financial stocks
 
-- Download stock data from the New York Stock Exchange:
+We start off by downloading stock data from the New York Stock Exchange:
 
 ```{r load_nyse_data, message=FALSE, warning=FALSE, cache=TRUE}
 nyse <- read_csv(here::here("data","nyse.csv"))
 ```
 
-- Create a table and a bar plot that shows the number of companies per sector, in descending order:
+Then we create a table and a bar plot that shows the number of companies per sector, in descending order:
 
 ```{r companies_per_sector, cache=TRUE}
 nyse %>% #We take the relevant dataset.
@@ -222,8 +97,8 @@ theme(plot.title = element_text(size = 14, face = "bold", hjust=.5),
 ```
 
 
-- Use the [Dow Jones Industrial Aveareg (DJIA)](https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average) Wikipedia website to find the stocks comprising the index and their ticker symbols.
-- In addition to the thirty stocks that make up the DJIA, add `SPY` which is an SP500 ETF (Exchange Traded Fund).
+
+We then use the [Dow Jones Industrial Aveareg (DJIA)](https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average) Wikipedia website to find the stocks comprising the index and their ticker symbols. We use this to and download stock data. In addition to the thirty stocks that make up the DJIA, we will also add `SPY` which is an SP500 ETF (Exchange Traded Fund).
 
 
 ```{r tickers_from_wikipedia, cache=TRUE}
@@ -266,7 +141,7 @@ tickers <- table1 %>%
 
 ```
 
-- Download prices for all 30 DJIA consituents and the SPY ETF that tracks SP500 since January 1, 2020
+Downloading prices for all 30 DJIA consituents and the SPY ETF that tracks SP500 since January 1, 2020
 
 ```{r get_price_data, message=FALSE, warning=FALSE, cache=TRUE}
 # Notice the cache=TRUE argument in the chunk options. Because getting data is time consuming, # cache=TRUE means that once it downloads data, the chunk will not run again next time you knit your Rmd
@@ -280,7 +155,7 @@ myStocks <- tickers %>%
 glimpse(myStocks) # examine the structure of the resulting data frame
 ```
 
--Calculate daily and monthly returns.
+Financial performance analysis depend on returns, so our first step is to calculate daily and monthly returns.
 
 
 ```{r calculate_returns, message=FALSE, warning=FALSE, cache=TRUE}
@@ -332,11 +207,12 @@ myStocks_returns_monthly %>% #We take the relevant dataset.
 ## Density plot for each stock
 
 **Creating a density plot, using `geom_density()`, for each of the stocks**
+
 ```{r density_monthly_returns, cache=TRUE}
 myStocks_returns_monthly %>% #We take the relevant dataset.
   group_by(symbol) %>% #We group the stocks by symbol.
   ggplot(aes(x = monthly_returns)) + #We define the x-axis of our density plots.
-  geom_density() + #We create our density plots.
+  geom_density(aes(colour = symbol), alpha = 1) + #We create our density plots.
   facet_wrap(vars(symbol)) #We create a density plot for each stock symbol.
 
 myStocks_returns_monthly %>% #We take the relevant dataset.
@@ -383,173 +259,9 @@ theme(plot.title = element_text(size = 14, face = "bold", hjust = .5),
 NULL
 ```
 
-**What can you we from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?**
+**What can you we infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?**
 
 The graph plots each stock's standard deviations against their expected returns. The stocks in the fourth quadrant (bottom right) of the graph have both the highest SD, hence the highest beta, and the lowest historic returns. We would expect these stocks to be poor investments, as they are those that bear the highest risk and the lowest expected returns.
-
-
-
----
-
-
-
-# Is inflation transitory?
-
-- Download data, clean, and merge data for CPI and the 10 year bill
-
-```{r data_cpi_10Year_yield, cache=TRUE}
-cpi  <-   tq_get("CPIAUCSL", get = "economic.data",
-                       from = "1980-01-01") %>% 
-  rename(cpi = symbol,  # FRED data is given as 'symbol' and 'price'
-         rate = price) %>% # we rename them to what they really are, e.g., cpi and rate
-  
-  # calculate yearly change in CPI by dividing current month by same month a year (or 12 months) earlier, minus 1
-  mutate(cpi_yoy_change = rate/lag(rate, 12) - 1)
-
-ten_year_monthly  <-   tq_get("GS10", get = "economic.data",
-                       from = "1980-01-01") %>% 
-  rename(ten_year = symbol,
-         yield = price) %>% 
-  mutate(yield = yield / 100) # original data is not given as, e.g., 0.05, but rather 5, for five percent
-
-
-# we have the two dataframes-- we now need to join them, and we will use left_join()
-mydata <- 
-  cpi %>% 
-  left_join(ten_year_monthly, by="date") %>% 
-  mutate(
-    year = year(date), # using lubridate::year() to generate a new column with just the year
-    month = month(date, label = TRUE),
-    decade=case_when(
-      year %in% 1980:1989 ~ "1980s",
-      year %in% 1990:1999 ~ "1990s",
-      year %in% 2000:2009 ~ "2000s",
-      year %in% 2010:2019 ~ "2010s",
-      TRUE ~ "2020s"
-      )
-  )
-```
-
-
-**Building the right graph**
-
-- Build the graph
-
-```{r chart_cpi_10Year_yield, cache=TRUE}
-library(ggrepel)
-mydata1 <- mydata%>%
- unite(month_year,month:year,remove = FALSE) 
-
-p<-ggplot(mydata1,aes(x=cpi_yoy_change,y=yield,colour=decade,label= month_year),size=2)
-
-p1<-p+
-  geom_point(show.legend=FALSE,size=0.8)+
-  facet_wrap(vars(decade),ncol=1,scales="free")+
-  labs(title="How are CPI and 10-year related?",x="CPI Yearly change",y="10-Year Treasury Constant Maturity Rate",size=2,caption="Data Source: FRED")+
-  geom_smooth(method="lm",show.legend=FALSE,size=0.5, se=FALSE)+
-  geom_text_repel(label=mydata1$month_year,point.padding = NA,size=3.5,label.padding=0.05, segment.size=0.3)+
-  theme_bw()+
-  theme(legend.position = "none",legend.background=element_blank(),plot.title=element_text(size=12,face="bold"),axis.text=element_text(size=7),strip.text=element_text(size=7),axis.title=element_text(size=10,face="bold"),aspect.ratio=1377/2560/5)+
-  scale_y_continuous(labels = scales::percent)+
-  scale_x_continuous(labels = scales::percent)+
-#Finally, we format the main title, the axes' titles and the axes' text to make the chart more easily readable.
-theme(plot.title = element_text(size = 20, face = "bold", hjust=.5), 
-      axis.text=element_text(size=12), 
-      axis.title.x = element_text(size = 20, angle = 0), 
-      axis.title.y = element_text(size = 20, angle = 90
-  )) +
-  NULL
-p1
-```
-
-
-
-
-
-#Opinion polls for the 2021 German elections
-
-The Guardian newspaper has an [election poll tracker for the upcoming German election](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor). The list of the opinion polls since Jan 2021 can be found at [Wikipedia](https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election) and we will reproduce a graph similar to the one produced by the Guardian using the data from the wikipedia page . 
-
-
-**Scraping Wikipedia page**
-
--Scrape the wikipedia page and import the table in a dataframe.
-
-
-```{r scrape_wikipedia_polling_data, warnings= FALSE, message=FALSE, cache=TRUE}
-url <- "https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election"
-
-# similar graphs and analyses can be found at 
-# https://www.theguardian.com/world/2021/jun/21/german-election-poll-tracker-who-will-be-the-next-chancellor
-# https://www.economist.com/graphic-detail/who-will-succeed-angela-merkel
-
-
-# get tables that exist on wikipedia page 
-tables <- url %>% 
-  read_html() %>% 
-  html_nodes(css="table")
-
-
-# parse HTML tables into a dataframe called polls 
-# Use purr::map() to create a list of all tables in URL
-polls <- map(tables, . %>% 
-             html_table(fill=TRUE)%>% 
-             janitor::clean_names())
-
-
-# list of opinion polls
-german_election_polls <- polls[[1]] %>% # the first table on the page contains the list of all opinions polls
-  slice(2:(n()-1)) %>%  # drop the first row, as it contains again the variable names and last row that contains 2017 results
-  mutate(
-         # polls are shown to run from-to, e.g. 9-13 Aug 2021. We keep the last date, 13 Aug here, as the poll date
-         # and we extract it by picking the last 11 characters from that field
-         end_date = str_sub(fieldwork_date, -11),
-         
-         # end_date is still a string, so we convert it into a date object using lubridate::dmy()
-         end_date = dmy(end_date),
-         
-         # we also get the month and week number from the date, if we want to do analysis by month- week, etc.
-         month = month(end_date),
-         week = isoweek(end_date)
-         )
-```
-
-
-
-**Building Chart**
-
--Reproduce the chart with the new data.
-
-```{r making_challenge_2_plot, warnings= FALSE, message=FALSE, cache=TRUE}
-library(plotly)
-#To be able to plot all the German parties' polling scores on the y axis by date, we need to rework our data set so as to have the date as a function of all the parties' polling score. To to this, we first have to define variables for each party' polling score.
-SPD <- german_election_polls$spd
-Union <- german_election_polls$union
-AfD <- german_election_polls$af_d
-FDP <- german_election_polls$fdp
-Linke <- german_election_polls$linke
-Grune <- german_election_polls$grune
-day <- german_election_polls$end_date
-
-df1 <- data.frame(SPD, Union, AfD, FDP, Linke, Grune, day) #We create a new data frame to which we assign all the variables we created.
-df2 <- melt(df1, id.vars='day') #Then, we melt all the parties' polling scores and keep the date as the other variable.
-head(df2)
-
-ggplot(df2,aes(x = day, y = value, colour = variable)) + #We plot the days and the parties' polling scores. We colour the parties to be able to differentiate them.
-  geom_point(shape=1) + #We make the points hollow to be able to better see the rolling average we'll create.
-  geom_ma(spd_MA= SMA, n=14, linetype = 1, size=1) + #We create a 14-day rolling average following the Guardian's methodology. We change the linetype to a solid one so that it is more easily readable.
-theme_bw()+
-labs(
-  title = "Polling scores for the German election",
-  x = "Day (2021)",
-  y = "German parties' polling scores",
-)+
-#Finally, we format the main title, the axes' titles and the axes' text to make the chart more easily readable.
-theme(plot.title = element_text(size = 14, face = "bold")) +
-theme(axis.title.x = element_text(size = 12, angle = 0)) +
-theme(axis.title.y = element_text(size = 12, angle = 90)) +
-  NULL
-```
 
 
 
