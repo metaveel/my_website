@@ -50,9 +50,7 @@ library(tidyquant)
 library(rvest) # to scrape wikipedia page
 ```
 
-```{r, echo=FALSE}
-knitr::include_graphics("/img/blogs/DJIA.JPG",error =FALSE)
-```
+
 
 ## My First R Assigment 
 

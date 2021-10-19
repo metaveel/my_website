@@ -50,10 +50,6 @@ library(tidyquant)
 ```
 
 
-```{r, echo=FALSE}
-knitr::include_graphics("/img/blogs/bike.JPG",error =FALSE)
-```
-
 # My Second R Assigment 
 
 The following graphs are about the excess rentals (the difference between actual rental and expected rental) in Transport for London ("TFL") bike sharing during 2016 to 2021
