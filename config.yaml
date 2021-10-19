@@ -102,7 +102,7 @@ params:
         url: blogs/yield_curve
       - image: ipo.jpg
         subtitle: My greatest achievement
-        title: A Private Equity Analyst in Bangko
+        title: A Private Equity Analyst in Bangkok
         url: blogs/private_equity
   two:
     buttonText: Thank you!
