@@ -38,6 +38,7 @@ glimpse(yield_curve)</code></pre>
 </ul>
 <div id="plotting-the-yield-curve" class="section level2">
 <h2>Plotting the yield curve</h2>
+<p>We will produce the following three graphs!</p>
 <div id="yields-on-us-rates-by-duration-since-1960" class="section level3">
 <h3>Yields on US rates by duration since 1960</h3>
 <p>—&gt; YIELD GRAPH #1 &lt;—</p>
@@ -119,10 +120,10 @@ ggplot(aes(x=date, y=value, colour=duration))+
   #remove the legend title
   scale_color_discrete(name=&quot;&quot;)</code></pre>
 <p><img src="/blogs/yield_curve_files/figure-html/yield_curve_3_exercise-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<blockquote>
 <p>According to <a href="https://en.wikipedia.org/wiki/List_of_recessions_in_the_United_States">Wikipedia’s list of recession in the United States</a>, since 1999 there have been two recession in the US: between Mar 2001–Nov 2001 and between Dec 2007–June 2009. Does the yield curve seem to flatten before these recessions? Can a yield curve flattening really mean a recession is coming in the US? Since 1999, when did short-term (3 months) yield more than longer term (10 years) debt?</p>
-<p>–&gt; OUR ANSWER BELOW &lt;–</p>
+</blockquote>
 <p>The yield curve seems to flatten before the recession, and this can indicate a recession as can be clearly seen on the graphs during 1999 – 2000 and 2005 - 2006. There is a smaller yield differential between short and long-term debt, an anticipation of tighter monetary policy and economic uncertainty. Short-term yield was more than long term debt during August 2000 – December 2000 and August 2006 to April 2007.</p>
-<p>–&gt; END OF OUR ANSWER &lt;–</p>
 <p>Besides calculating the spread (10year - 3months), there are a few things we need to do to produce our final plot</p>
 <ol style="list-style-type: decimal">
 <li>Setup data for US recessions</li>
@@ -233,7 +234,7 @@ ggplot(aes(x=date, y=diff))+
 <p><img src="/blogs/yield_curve_files/figure-html/yield_curve_4_exercise-1.png" width="100%" style="display: block; margin: auto;" /></p>
 <ul>
 <li>To add the grey shaded areas corresponding to recessions, we use <code>geom_rect()</code></li>
-<li>to colour the ribbons blue/red we must see whether the spread is positive or negative and then use <code>geom_ribbon()</code>.</li>
+<li>To colour the ribbons blue/red we must see whether the spread is positive or negative and then use <code>geom_ribbon()</code>.</li>
 </ul>
 </div>
 </div>

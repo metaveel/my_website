@@ -105,7 +105,7 @@ params:
         title: A Private Equity Analyst in Bangkok
         url: blogs/private_equity
   two:
-    buttonText: Thank you!
+    buttonText: More About Me!
     enable: yes
     subtitle: "a beautiful day starts with a beautiful mindset"
     title: Thank you!
