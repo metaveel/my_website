@@ -96,14 +96,14 @@ params:
         subtitle: My third R assignment -  introducing to ggpairs() to create a scatterplot and correlation matrix
         title: Pay Discrimination 
         url: blogs/assignment_three
-      - image: pic05.jpg
-        subtitle: My greatest achievement 
-        title: A Private Equity Analyst in Bangkok 
+      - image: pic10.jpg
+        subtitle: Does the yield curve seem to flatten before these recessions? 
+        title: Yields on U.S. Treasury rates 
+        url: blogs/yield_curve
+      - image: ipo.jpg
+        subtitle: My greatest achievement
+        title: A Private Equity Analyst in Bangko
         url: blogs/private_equity
-      - image: pic06.jpg
-        subtitle: Eating well is a form of self respect
-        title: Food Matters!
-        url: blogs/ipsum
   two:
     buttonText: Thank you!
     enable: yes

@@ -47,6 +47,24 @@ Having always been passionate about investing and self-motivated, I decided to p
 knitr::include_graphics("/img/blogs/friend.JPG",error =FALSE)
 ```
 
-I am religious yet nurtured to be open-minded to modernness. My hobby is meditation. I believe that the wholeness of presence helps me throughout any challenges in my life!
+I am religious yet nurtured to be open-minded to modernness. My hobby is meditation. I believe that the wholeness of presence helps me throughout any challenges in my life! 
+
+My other hobby is hiking ! 
+
+Chiangrai, Thailand
+
+```{r}
+knitr::include_graphics("/img/blogs/hike1.JPG",error =FALSE)
+```
+
+Colorado, Thailand
+
+```{r}
+knitr::include_graphics("/img/blogs/hike2.JPG",error =FALSE)
+```
+
+
+
+
 
 
