@@ -49,13 +49,12 @@ library(tidyquant)
 ```
 
 
-# My Second R Assigment 
+## My Second R Assigment 
 
-The following graphs are about the excess rentals (the difference between actual rental and expected rental) in Transport for London ("TFL") bike sharing during 2016 to 2021
+This is part of my second assignment in R from Data Analytics course. The following graphs are about the excess rentals (the difference between actual rental and expected rental) in Transport for London ("TFL") bike sharing during 2016 to 2021
 
 
-## Downloading and cleaning data
-We download the latest TFL data and read it as a dataframe. Then we change the date variables to get year, month and week. 
+We start off by downloading the latest TFL data and read it as a dataframe. Then we change the date variables to get year, month and week. 
 
 ```{r get_tfl_data, cache=TRUE}
 url <- "https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx"
@@ -77,14 +76,12 @@ bike <- bike0 %>%
           week = isoweek(day))
 ```
 
-**Look at May and Jun and compare 2020 with the previous years. What's happening?**
+## Producing graphs
 
-Looking at the facet grid chart with the number of bikes hired by month and year, we see a much smaller peak in May and June 2020 compared to previous years. What we see is that number of days with a high number of rentals, aprx. 30-50k is much less than previous years. The number of bikes rented each day is much more inconsistent and varies along the entire spectrum. This is a result of COVID lockdown, where bike usage patterns changed. We see that the rentals take up again in July, when lockdown was lifted, and the distribution starts to normalize.  
-
-## Reproducing graphs
-We will reproduce the following two graphs.
+We will produce two graphs 1) Monthly changes in TFL bike rentals and 2) Weekly changes in TFL bike rentals
 
 We are creating the first plot:
+
 ```{r tfl_plot_1, cache=TRUE}
 data_bike <-bike %>%
   group_by(month,year) %>% #grouping by month and year
@@ -126,6 +123,9 @@ and calculated between 2016-2019",
 
 ```
 
+**Look at May and Jun and compare 2020 with the previous years. What's happening?**
+
+Looking at the facet grid chart with the number of bikes hired by month and year, we see a much smaller peak in May and June 2020 compared to previous years. What we see is that number of days with a high number of rentals, aprx. 30-50k is much less than previous years. The number of bikes rented each day is much more inconsistent and varies along the entire spectrum. This is a result of COVID lockdown, where bike usage patterns changed. We see that the rentals take up again in July, when lockdown was lifted, and the distribution starts to normalize. 
 
 We are creating the second plot:
 
