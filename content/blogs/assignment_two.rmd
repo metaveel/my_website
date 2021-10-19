@@ -5,7 +5,7 @@ categories:
 date: "2021-10-17"
 description: Excess rentals in Transport for London bike sharing 
 draft: false
-image: bike.jpeg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
+image: bike.jpg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
 
 keywords: ""
 slug: assignment_two 
@@ -48,6 +48,7 @@ library(fivethirtyeight)
 library(tidyquant)
 
 ```
+
 
 ```{r, echo=FALSE}
 knitr::include_graphics("/img/blogs/bike.JPG",error =FALSE)
