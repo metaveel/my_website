@@ -47,8 +47,7 @@ library(tinytex)
 
 # My third R Assigment 
 
-The following graphs are about the excess rentals (the difference between actual rental and expected rental) in Transport for London ("TFL") bike sharing during 2016 to 2021
-
+The following content and graphs are about the pay discrimination between women and men at Omega Group plc 
 
 
 # Omega Group plc- Pay Discrimination
