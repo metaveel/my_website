@@ -1,0 +1,137 @@
+---
+title: "Excess rentals in Transport for London bike sharing"
+date: '2021-10-17'
+description: Excess rentals in Transport for London bike sharing
+draft: no
+image: bike.jpg
+keywords: ''
+slug: assignment_two
+categories:
+- ''
+- ''
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<div id="my-second-r-assigment" class="section level1">
+<h1>My Second R Assigment</h1>
+<p>The following graphs are about the excess rentals (the difference between actual rental and expected rental) in Transport for London (“TFL”) bike sharing during 2016 to 2021</p>
+<div id="downloading-and-cleaning-data" class="section level2">
+<h2>Downloading and cleaning data</h2>
+<p>We download the latest TFL data and read it as a dataframe. Then we change the date variables to get year, month and week.</p>
+<pre class="r"><code>url &lt;- &quot;https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx&quot;
+
+# Download TFL data to temporary file
+httr::GET(url, write_disk(bike.temp &lt;- tempfile(fileext = &quot;.xlsx&quot;)))</code></pre>
+<pre><code>## Response [https://airdrive-secure.s3-eu-west-1.amazonaws.com/london/dataset/number-bicycle-hires/2021-09-23T12%3A52%3A20/tfl-daily-cycle-hires.xlsx?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJJDIMAIVZJDICKHA%2F20211018%2Feu-west-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20211018T102500Z&amp;X-Amz-Expires=300&amp;X-Amz-Signature=5002b5714d797c2111e473894750869ba53ac7ab975e0c865661152d57314a4f&amp;X-Amz-SignedHeaders=host]
+##   Date: 2021-10-18 10:26
+##   Status: 200
+##   Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+##   Size: 174 kB
+## &lt;ON DISK&gt;  C:\Users\metav\AppData\Local\Temp\RtmpAnLWuH\file60745f241fde.xlsx</code></pre>
+<pre class="r"><code># Use read_excel to read it as dataframe
+bike0 &lt;- read_excel(bike.temp,
+                   sheet = &quot;Data&quot;,
+                   range = cell_cols(&quot;A:B&quot;))
+
+# change dates to get year, month, and week
+bike &lt;- bike0 %&gt;% 
+  clean_names() %&gt;% 
+  rename (bikes_hired = number_of_bicycle_hires) %&gt;% 
+  mutate (year = year(day),
+          month = lubridate::month(day, label = TRUE),
+          week = isoweek(day))</code></pre>
+<p><strong>Look at May and Jun and compare 2020 with the previous years. What’s happening?</strong></p>
+<p>Looking at the facet grid chart with the number of bikes hired by month and year, we see a much smaller peak in May and June 2020 compared to previous years. What we see is that number of days with a high number of rentals, aprx. 30-50k is much less than previous years. The number of bikes rented each day is much more inconsistent and varies along the entire spectrum. This is a result of COVID lockdown, where bike usage patterns changed. We see that the rentals take up again in July, when lockdown was lifted, and the distribution starts to normalize.</p>
+</div>
+<div id="reproducing-graphs" class="section level2">
+<h2>Reproducing graphs</h2>
+<p>We will reproduce the following two graphs.</p>
+<p>We are creating the first plot:</p>
+<pre class="r"><code>data_bike &lt;-bike %&gt;%
+  group_by(month,year) %&gt;% #grouping by month and year
+  summarize(actual_rentals=mean(bikes_hired)) #selecting by the number of bikes hired to create the number of bikes hired by every month of each year
+
+expected_bike &lt;-data_bike %&gt;%
+  group_by(month) %&gt;% #grouping by month
+  filter(year %in% c(2016,2017,2018,2019)) %&gt;% #filtering the months we want to analyse
+  summarize(expected_rentals=mean(actual_rentals)) #selecting by the number of bikes hired to create the number of bikes hired by every month overall no matter the year
+
+df3 &lt;- left_join(data_bike, expected_bike, by = c(&quot;month&quot;)) %&gt;% 
+  filter(year %in% c(2016,2017,2018,2019,2020,2021)) %&gt;% #filtering the months we want to analyse
+  mutate(excess_rentals = actual_rentals - expected_rentals, #using the mutate function to obtain the excess rentals
+         up = ifelse(actual_rentals&gt;expected_rentals, actual_rentals, expected_rentals), #using the mutate function to obtain the excess rentals
+         down = ifelse(actual_rentals&lt;expected_rentals, actual_rentals, expected_rentals)) #using the mutate function to obtain the deficit rentals
+
+ggplot(df3,aes(x=month,y=actual_rentals,group=1))+
+  geom_line(colour=&quot;black&quot;,size=0.2)+ #plotting the rentals observed by month
+  geom_line(aes(x=month,y=expected_rentals,group=1),colour=&quot;blue&quot;,size=1)+ #plotting the expected rentals by month
+  geom_ribbon(aes(ymin=actual_rentals,ymax=up),fill=&quot;#CB454A&quot;,alpha=0.4)+ #filling in green the excess of bike rentals
+  geom_ribbon(aes(ymin=down,ymax=actual_rentals),fill=&quot;#7DCD85&quot;,alpha=0.4)  + #filling in red the deficit of bike rentals
+  facet_wrap(~year)+ #faceting by year
+  theme_bw()+
+  labs(title=&quot;Monthly changes in Tfl bike rentals&quot;,
+       subtitle = &quot;Change from monthly average shown in blue
+and calculated between 2016-2019&quot;,
+         y=&quot;Bike rentals&quot;,x=&quot;&quot;,caption=&quot;Source:Tfl, London Data Store&quot;)+
+  theme(legend.position = &quot;none&quot;, #setting a theme to make the graph more easily readable
+        legend.background=element_blank(),
+        plot.title=element_text(size=6,face=&quot;bold&quot;),
+        axis.ticks=element_blank(),
+        axis.text=element_text(size=4),
+        strip.text=element_text(size=4),
+        axis.title=element_text(size=4,face=&quot;bold&quot;),
+        plot.subtitle=element_text(size=4),
+        plot.caption = element_text(size=4),
+        panel.border = element_rect(colour=&quot;white&quot;),
+        strip.background = element_rect(color=&quot;transparent&quot;,fill=&quot;transparent&quot;))</code></pre>
+<p><img src="/blogs/assignment_two_files/figure-html/tfl_plot_1-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>We are creating the second plot:</p>
+<pre class="r"><code>df4 &lt;-bike %&gt;%
+  group_by(year,week) %&gt;% #grouping by month
+  filter(year&gt;2015,week!=53) %&gt;% #filtering for the year we are interested in and setting the number of weeks
+  summarize(weekly_average=mean(bikes_hired)) #creating the average mean of bikes hired by every week of each year
+
+df5 &lt;-df4 %&gt;%
+  group_by(week) %&gt;% #grouping by week
+  filter(year&gt;2015,week!=53) %&gt;% #filtering for the year we are interested in and setting the number of weeks
+  summarize(weekly_average_overall=mean(weekly_average)) #creating the average mean of bikes hired every week no matter the year
+
+df6 &lt;- left_join(df4, df5, by = c(&quot;week&quot;))%&gt;% 
+  mutate(week_diff = ((weekly_average-weekly_average_overall)/weekly_average_overall))%&gt;% #creating the difference of expected bike rentals vs actual bikes rental
+  select(year, week, week_diff) %&gt;% #selecting for the columns that we will use
+  mutate(positive=if_else(0&lt;week_diff,week_diff,0), #creating a function to calculate the bike rentals deficit
+         negative=if_else(0&gt;week_diff,week_diff,0),colorID=if_else(0&lt;week_diff,&quot;#7DCD85&quot;,&quot;#CB454A&quot;))  #creating a function to calculate the bike rentals excess
+
+ggplot(df6,aes(x=week,y=week_diff,ymin=-0.6,ymax=1))+
+  geom_line(group = 1) + #plotting the bike rentals
+  geom_rug(data = df6, aes(color=colorID, alpha=0.4), sides = &quot;b&quot;) + 
+  geom_ribbon(aes(ymin=0, ymax=negative), fill=&quot;#CB454A&quot;, alpha= 0.4)+ #colouring the deficit of bikes rentals in red
+  geom_ribbon(aes(ymin=positive, ymax=0), fill=&quot;#7DCD85&quot;, alpha= 0.4)+ #colouring the excess of bikes rentals in green
+  facet_wrap(~year)+ #faceting by year
+  scale_y_continuous(labels=scales::percent)+ #scaling by percent for increased readibility
+  scale_color_manual(values=c(&quot;#7DCD85&quot;,&quot;#CB454A&quot;))+
+  theme_bw()+
+  geom_rect(aes(xmin=13,xmax=26,ymin=-0.80,ymax=1.20), alpha=0.01, fill=&quot;gray&quot;)+ #colouring Q2 in gray
+  geom_rect(aes(xmin=39,xmax=52,ymin=-0.80,ymax=1.20), alpha=0.01, fill=&quot;gray&quot;)+ #colouring G4 in gray
+  labs(title=&quot;Weekly changes in Tfl bike rentals&quot;,
+       subtitle = &quot;Change from weekly average
+calculated between 2016-2019&quot;,
+         y=&quot;&quot;,x=&quot;week&quot;,caption=&quot;Source: Tfl, London Data Store&quot;)+
+  theme(legend.position = &quot;none&quot;, #setting a theme for increased readibility
+        legend.background=element_blank(),
+        plot.title=element_text(size=6,face=&quot;bold&quot;),
+        axis.ticks=element_blank(),
+        axis.text=element_text(size=4),
+        strip.text=element_text(size=4),
+        axis.title=element_text(size=4,face=&quot;bold&quot;),
+        plot.subtitle=element_text(size=4),
+        plot.caption = element_text(size=4),
+        panel.border = element_rect(colour=&quot;white&quot;),
+        strip.background = element_rect(color=&quot;transparent&quot;,fill=&quot;transparent&quot;))</code></pre>
+<p><img src="/blogs/assignment_two_files/figure-html/tfl_plot_2-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p><strong>Should you use the mean or the median to calculate your expected rentals? Why?</strong></p>
+<p>We use mean because we are looking at normal distributions. The mean is often heavily influenced by outliers, however, our data does not contain outliers. The median is usually used for skewed distributions or data with many outliers. The expected outcome value is often referred to as the “long-term” average or mean. Over the long term of doing sampling over and over, you would expect this average.</p>
+</div>
+</div>

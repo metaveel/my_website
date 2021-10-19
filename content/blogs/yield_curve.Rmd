@@ -1,0 +1,683 @@
+---
+title: "Session 6: Homework 3"
+author: "Study Group B9: Sherington AMARAPALA, Gianmaria BARTOCCIONI, Metavee LUANGTHAWORNKUL,
+  Keshav MAHENDRA, Hadrien PISTRE, Cissie XU"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, echo=FALSE, cache=TRUE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
+library(here)
+library(skimr)
+library(janitor)
+library(broom)
+library(tidyquant)
+library(infer)
+library(openintro)
+library(tinytex)
+```
+
+
+
+# Challenge 1: Yield Curve inversion
+
+Every so often, we hear warnings from commentators on the "inverted yield curve" and its predictive power with respect to recessions. An explainer what a [inverted yield curve is can be found here](https://www.reuters.com/article/us-usa-economy-yieldcurve-explainer/explainer-what-is-an-inverted-yield-curve-idUSKBN1O50GA). If you'd rather listen to something, here is a great podcast from [NPR on yield curve indicators](https://www.podbean.com/media/share/dir-4zgj9-6aefd11)
+
+In addition, many articles and commentators think that, e.g., [*Yield curve inversion is viewed as a harbinger of recession*](https://www.bloomberg.com/news/articles/2019-08-14/u-k-yield-curve-inverts-for-first-time-since-financial-crisis). One can always doubt whether inversions are truly a harbinger of recessions, and [use the attached parable on yield curve inversions](https://twitter.com/5_min_macro/status/1161627360946511873).
+
+
+```{r yield_curve_parable.jpg, echo=FALSE, out.width="100%", cache=TRUE}
+knitr::include_graphics(here::here("images", "yield_curve_parable.jpg"), error = FALSE)
+```
+
+
+In our case we will look at US data and use the [FRED database](https://fred.stlouisfed.org/) to download historical yield curve rates, and plot the yield curves since 1999 to see when the yield curves flatten. If you want to know more, a very nice article that explains the [yield curve is and its inversion can be found here](https://fredblog.stlouisfed.org/2018/10/the-data-behind-the-fear-of-yield-curve-inversions/). At the end of this challenge you should produce this chart
+
+```{r yield_curve_challenge, echo=FALSE, out.width="100%", cache=TRUE}
+knitr::include_graphics(here::here("images", "yield_curve_challenge.png"), error = FALSE)
+```
+
+
+First, we will load the yield curve data file that contains data on the yield curve since 1960-01-01
+
+```{r download_historical_yield_curve, warning=FALSE, cache=TRUE}
+
+yield_curve <- read_csv(here::here("data", "yield_curve.csv"))
+
+glimpse(yield_curve)
+```
+
+Our dataframe `yield_curve` has five columns (variables):
+
+- `date`: already a date object
+- `series_id`: the FRED database ticker symbol
+- `value`: the actual yield on that date
+- `maturity`: a short hand for the maturity of the bond
+- `duration`: the duration, written out in all its glory!
+
+
+## Plotting the yield curve
+
+This may seem long but it should be easy to produce the following three plots
+
+### Yields on US rates by duration since 1960
+
+```{r yield_curve_1, echo=FALSE, out.width="100%", cache=TRUE}
+knitr::include_graphics(here::here("images", "yield_curve1.png"), error = FALSE)
+```
+
+---> YIELD GRAPH #1 REPRODUCTION BELOW <---
+```{r yield_curve_1_exercise, echo=FALSE, out.width="100%", cache=TRUE}
+
+#create a vector to order the durations
+order <- c("3-Month Treasury Bill","6-Month Treasury Bill","1-Year Treasury Rate","2-Year Treasury Rate","3-Year Treasury Rate","5-Year Treasury Rate","7-Year Treasury Rate","10-Year Treasury Rate","20-Year Treasury Rate","30-Year Treasury Rate")
+
+yield_curve %>%
+
+#plot the graph
+ggplot(aes(x=date, y=value, colour=duration))+
+  
+  #create a ligne graph and remove the legend
+  geom_line(show.legend = FALSE)+
+  
+  #facet by maturity using the order we defined above and set the number of column per row to 2
+  facet_wrap(~fct_relevel(duration, order),ncol=2)+
+  
+  #set the proper theme, titles and caption
+  theme_bw()+
+  labs(title="Yields on U.S. Treasury rates since 1960",
+       y="Yield (%)",
+       x="Maturity",
+       caption="Source: St. Louis Federal Reserve Economic Database (FRED)")
+```
+
+
+### Monthly yields on US rates by duration since 1999 on a year-by-year basis
+
+
+```{r yield_curve_2, echo=FALSE, out.width="100%", cache=TRUE}
+knitr::include_graphics(here::here("images", "yield_curve2.png"), error = FALSE)
+```
+---> YIELD GRAPH #2 REPRODUCTION BELOW <---
+```{r replicate_yield_curve_2, cache=TRUE}
+
+#create a vector to order the maturities
+order_2 <- c("3m","6m","1y","2y","3y","5y","7y","10y","20y","30y")
+
+yield_curve_2 <- yield_curve %>%
+  
+  #selecting all the column except duration
+  select(-c(series_id,duration))%>%
+  
+  #create new columns for date, year and month
+  mutate(date=ymd(date),
+         year=year(date),
+         month=month(date)) %>%
+  
+  #filter for the year after 1999
+  filter(year>=1999)
+
+yield_curve_2 %>%
+  
+  #create a new column with the maturities order as set above with the vector we created
+  mutate(maturity=fct_relevel(maturity,order_2))%>%
+  
+  #plot the graph
+ggplot(aes(x=maturity, y=value, color=year))+
+  
+  #create a line graph, group by month and remove the legend 
+  geom_line(aes(group=month),show.legend = FALSE)+
+  
+  #color the year with rainbow colours
+  scale_color_gradientn(colors = rainbow(23))+
+  
+  #facet by year and set the column number to 4
+  facet_wrap(~year,ncol=4)+
+  
+  #set the proper theme, titles and caption
+  theme_bw()+
+  labs(title="US Yield Curve",
+       y="Maturity",
+       x="Yield (%)",
+       caption="Source: St. Louis Federal Reserve Economic Database (FRED)")
+
+```
+
+### 3-month and 10-year yields since 1999
+
+```{r yield_curve_3, echo=FALSE, out.width="100%", cache=TRUE}
+knitr::include_graphics(here::here("images", "yield_curve3.png"), error = FALSE)
+```
+---> YIELD GRAPH #3 REPRODUCTION BELOW <---
+```{r yield_curve_3_exercise, out.width="100%", cache=TRUE}
+
+yield_curve_2bis <- yield_curve %>%
+  
+  #create column for the date, year and month
+  mutate(date=ymd(date),
+         year=year(date),
+         month=month(date)) %>%
+  
+  #filter for the year after 1999 and the maturities we are interested in
+  filter(year>=1999,
+         duration%in% c("3-Month Treasury Bill","10-Year Treasury Rate"))
+
+yield_curve_2bis %>%
+  
+#plot the graph
+ggplot(aes(x=date, y=value, colour=duration))+
+  
+  #create a line graph
+  geom_line()+
+  
+  #set the proper theme, titles and caption
+  theme_bw()+
+  labs(title="Yields on 3-month and 10-year US Treasury rates since 1999",
+       y="%",
+       x="",
+       caption="Source: St. Louis Federal Reserve Economic Database (FRED)")+
+  
+  #remove the legend title
+  scale_color_discrete(name="")
+```
+
+According to [Wikipedia's list of recession in the United States](https://en.wikipedia.org/wiki/List_of_recessions_in_the_United_States), since 1999 there have been two recession in the US: between Mar 2001–Nov 2001 and between Dec 2007–June 2009. Does the yield curve seem to flatten before these recessions? Can a yield curve flattening really mean a recession is coming in the US? Since 1999, when did short-term (3 months) yield more than longer term (10 years) debt?
+
+--> OUR ANSWER BELOW <--
+
+The yield curve seems to flatten before the recession, and this can indicate a recession as can be clearly seen on the graphs during 1999 – 2000 and 2005 - 2006. There is a smaller yield differential between short and long-term debt, an anticipation of tighter monetary policy and economic uncertainty. Short-term yield was more than long term debt during August 2000 – December 2000 and August 2006 to April 2007.
+
+--> END OF OUR ANSWER <--
+
+Besides calculating the spread (10year - 3months), there are a few things we need to do to produce our final plot
+
+1. Setup data for US recessions 
+1. Superimpose recessions as the grey areas in our plot
+1. Plot the spread between 30 years and 3 months as a blue/red ribbon, based on whether the spread is positive (blue) or negative(red)
+
+- For the first, the code below creates a dataframe with all US recessions since 1946
+
+```{r setup_US-recessions, warning=FALSE, cache=TRUE}
+
+# get US recession dates after 1946 from Wikipedia 
+# https://en.wikipedia.org/wiki/List_of_recessions_in_the_United_States
+
+recessions <- tibble(
+  from = c("1948-11-01", "1953-07-01", "1957-08-01", "1960-04-01", "1969-12-01", "1973-11-01", "1980-01-01","1981-07-01", "1990-07-01", "2001-03-01", "2007-12-01","2020-02-01"),  
+  to = c("1949-10-01", "1954-05-01", "1958-04-01", "1961-02-01", "1970-11-01", "1975-03-01", "1980-07-01", "1982-11-01", "1991-03-01", "2001-11-01", "2009-06-01", "2020-04-30") 
+  )  %>% 
+  mutate(From = ymd(from), 
+         To=ymd(to),
+         duration_days = To-From)
+
+recessions
+```
+
+```{r yield_curve_4_exercise, out.width="100%", cache=TRUE}
+
+yield_curve_4 <- yield_curve %>%
+  
+  #select all the column except the duration variable
+  select(-c(series_id,duration))%>% 
+  
+  #create a year column
+  mutate(date=ymd(date), 
+         year=year(date))%>%
+  
+  #filter for the maturities we will use to compute the yield difference
+  filter(maturity %in% c("3m","10y")) 
+
+yield_curve_5 <- yield_curve_4 %>%
+  
+  #make our data set wide with the two maturities we need to compute the difference
+  pivot_wider(names_from = maturity, 
+              values_from = value) %>%
+  
+  #create a new column to obtain the difference bewteen the two maturities
+  mutate(diff = `10y` - `3m`) %>%
+  
+  #create new columns to color the areas below and above the x=0 axis in respectively red and blue
+  mutate(positive=if_else(0<diff,diff,0), 
+         negative=if_else(0>diff,diff,0),
+         #setting the right color ID
+         colorID=if_else(0<diff,"#F4B2B6","#A4C7E9")) 
+
+yield_curve_5 %>% 
+  
+#plot the graph
+ggplot(aes(x=date, y=diff))+ 
+  
+  #create a line graph
+  geom_line(show.legend = FALSE)+ 
+  
+  #grey the background areas during which the recessions occurred
+  geom_rect(aes(xmin = as.Date("1960-04-01"),xmax = as.Date("1961-02-01"),ymin=-Inf,ymax=Inf), alpha=0.01, fill="gray")+
+  geom_rect(aes(xmin = as.Date("1969-12-01"),xmax = as.Date("1970-11-01"),ymin=-Inf,ymax=Inf), alpha=0.01, fill="gray")+
+  geom_rect(aes(xmin = as.Date("1973-11-01"),xmax = as.Date("1975-03-01"),ymin=-Inf,ymax=Inf), alpha=0.01, fill="gray")+
+  geom_rect(aes(xmin = as.Date("1980-01-01"),xmax = as.Date("1980-07-01"),ymin=-Inf,ymax=Inf), alpha=0.01, fill="gray")+
+  geom_rect(aes(xmin = as.Date("1981-07-01"),xmax = as.Date("1982-11-01"),ymin=-Inf,ymax=Inf), alpha=0.01, fill="gray")+
+  geom_rect(aes(xmin = as.Date("1990-07-01"),xmax = as.Date("1991-03-01"),ymin=-Inf,ymax=Inf), alpha=0.01, fill="gray")+
+  geom_rect(aes(xmin = as.Date("2001-03-01"),xmax = as.Date("2001-11-01"),ymin=-Inf,ymax=Inf), alpha=0.01, fill="gray")+
+  geom_rect(aes(xmin = as.Date("2007-12-01"),xmax = as.Date("2009-06-01"),ymin=-Inf,ymax=Inf), alpha=0.01, fill="gray")+
+  geom_rect(aes(xmin = as.Date("2020-02-01"),xmax = as.Date("2020-04-30"),ymin=-Inf,ymax=Inf), alpha=0.01, fill="gray")+
+
+  #color the rug whether the line is positive (blue) or negative (red)
+  geom_rug(data = yield_curve_5, 
+           aes(color=colorID, alpha=0.4), 
+           sides = "b") +
+  scale_color_manual(values=c("#F4B2B6","#A4C7E9"))+
+  
+  #color the line area in red below zero
+  geom_ribbon(aes(ymin=0, ymax=negative), 
+              fill="#F4B2B6", 
+              alpha= 0.4)+
+  geom_ribbon(aes(ymin=positive, ymax=0), 
+              fill="#A4C7E9", 
+              alpha= 0.4)+
+
+  #set the proper titles and caption
+  theme_bw()+
+    labs(title="Yield Curve Inversion: 10-year minus 3-month US Treasury rates",
+    subtitle = "Difference in % points, monthly averages.\nShaded areas correspond to recessions.",
+    y="Difference (10 year - 3 month) yield in %",
+    x="",
+    caption="Source: FRED, Federal Reserve Bank of St. Louis")+
+  
+  #remove the legend
+  theme(legend.position = "none",
+        legend.background=element_blank())
+```
+
+- To add the grey shaded areas corresponding to recessions, we use `geom_rect()`
+- to colour the ribbons blue/red we must see whether the spread is positive or negative and then use `geom_ribbon()`. You should be familiar with this from last week's homework on the excess weekly/monthly rentals of Santander Bikes in London.
+
+# Challenge 2: GDP components over time and among countries
+
+At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). You can read more about GDP and the different approaches in calculating at the [Wikipedia GDP page](https://en.wikipedia.org/wiki/Gross_domestic_product).
+
+The GDP data we will look at is from the [United Nations' National Accounts Main Aggregates Database](https://unstats.un.org/unsd/snaama/Downloads), which contains estimates of total GDP and its components for all countries from 1970 to today. We will look at how GDP and its components have changed over time, and compare different countries and how much each component contributes to that country's GDP. The file we will work with is [GDP and its breakdown at constant 2010 prices in US Dollars](http://unstats.un.org/unsd/amaapi/api/file/6) and it has already been saved in the Data directory. Have a look at the Excel file to see how it is structured and organised
+
+
+```{r read_GDP_data, cache=TRUE}
+
+UN_GDP_data  <- read_excel(here::here("data", "Download-GDPconstant-USD-countries.xls"), # Excel filename
+                sheet="Download-GDPconstant-USD-countr", # Sheet name
+                skip=2) # Number of rows to skip
+
+```
+
+The first thing you need to do is to tidy the data, as it is in wide format and you must make it into long, tidy format. Please express all figures in billions (divide values by `1e9`, or $10^9$), and you want to rename the indicators into something shorter.
+
+```{r reshape_GDP_data, cache=TRUE}
+
+#convert the data to long format
+tidy_GDP_data  <-  pivot_longer(UN_GDP_data, cols = 4:51, #using the the columns 4 to 51 to make a long table
+                                names_to = "Years",
+                                values_to = "Values") 
+                
+#clean the data - values to billions, set the variables properly and rename indicators
+tidy_GDP_data<- tidy_GDP_data %>% 
+  mutate(Values=Values/10^9) %>%
+  mutate(across(Years,as.numeric)) %>% #set "Years" as a numeric variable
+  mutate(across(Country,as.character)) %>%
+  rename(Indicator=IndicatorName) 
+
+#check which indicators and countries to change
+tidy_GDP_data %>% distinct(Indicator)
+tidy_GDP_data %>% distinct(Country)
+
+#we get an error message when recoding in pipe, so we use base R based on suggestions from StackOverFlow 
+#the error we get is <<Error in UseMethod("recode") : no applicable method for 'recode' applied to an object of class "c('tbl_df', 'tbl', 'data.frame')">>
+
+#rename the indicators using the recode function
+tidy_GDP_data$Indicator <- recode(tidy_GDP_data$Indicator, 
+                                  "Agriculture, hunting, forestry, fishing (ISIC A-B)"="Agriculture",
+                                  "Changes in inventories"="Inventory changes",
+                                  "Construction (ISIC F)"="Construction",
+                                  "Exports of goods and services"="Exports",
+                                  "Final consumption expenditure"="Final consumption",
+                                  "General government final consumption expenditure"="Government expenditure",
+                                 # "Gross Domestic Product (GDP)"="GPD",
+                                  "Gross fixed capital formation (including Acquisitions less disposals of valuables)"="Fixed capital formation",
+                                  "Household consumption expenditure (including Non-profit institutions serving households)"="Household expenditure",
+                                  "Imports of goods and services"="Imports",
+                                  "Manufacturing (ISIC D)"="Manufacturing",
+                                  "Other Activities (ISIC J-P)"="Other",
+                                  "Total Value Added"="Value added",
+                                  "Transport, storage and communication (ISIC I)"="Transport",
+                                  "Wholesale, retail trade, restaurants and hotels (ISIC G-H)"="Wholesale")
+
+tidy_GDP_data <- tidy_GDP_data %>% 
+  select("Country", "Indicator", "Years", "Values")
+
+# Let us compare GDP components for these 3 countries
+country_list <- c("United States","India", "Germany")
+
+#creat a data frame filtered with the vector containing the three countries we want to compare
+tidy_GDP_data_3 <- tidy_GDP_data %>%
+  filter(Country %in% country_list)
+```
+
+First, can you produce this plot?
+
+
+```{r gdp1, echo=FALSE, out.width="100%", cache=TRUE}
+knitr::include_graphics(here::here("images", "gdp1.png"), error = FALSE)
+```
+
+```{r gdp1_plot, cache=TRUE, out.width="100%"}
+
+#create the vector of the indicators we want 
+indicator_list_1 <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports")
+
+#selecting our tidy data frame that has been filtered for the Germany, India and the US
+tidy_GDP_data_3 %>%
+  
+  #filter the indicators with the vector we created
+  filter(Indicator %in% indicator_list_1) %>%
+  
+  #plot the graph with the right aesthetics
+  ggplot(aes(x = Years, y = Values, colour = Indicator))+
+  
+  #group by indicator
+  geom_line(aes(group=Indicator))+
+  
+  #facet by country and set the column number to 3
+  facet_wrap(~Country,ncol=3)+
+  
+  #set the proper theme, titles and caption
+  theme_bw()+
+  labs(title="GDP components over time",
+       subtitle = "In constant 2010 USD",
+       color = "Components of  GDP",
+       y="Billion US$",
+       x="")
+```
+
+Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*), Gross Capital Formation (business investment *I*), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator `Gross Domestic Product (GDP)` in your dataframe, I would like you to calculate it given its components discussed above.
+
+> What is the % difference between what you calculated as GDP and the GDP figure included in the dataframe?
+
+--> OUR ANSWER BELOW <--
+
+```{r GDP differences, cache=TRUE}
+
+library(tidyverse)
+#creating vector of the countries we want to analyse
+country_list_3 <- c("Germany","India","United States")
+
+#create a vector of the of indicators which we will then widen in our pivot_wider
+indicator_list_2 <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports","Gross Domestic Product (GDP)")
+
+#create a new dataframe
+tidy_GDP_data_6 <- tidy_GDP_data %>%
+  
+  #filter for the indicators and countries that are of interest to us
+  filter(Country %in% country_list_3) %>%
+  filter(Indicator %in% indicator_list_2) %>%
+  
+  #pivot wider with the indicators we filtered to then compute the Net Exports and the proportion of GDP component
+  pivot_wider(names_from = Indicator,
+              values_from = Values) %>%
+  
+  #create new columns to compute the Net Exports so as to be able to compare the GDP with the four components (G + I + C + (X-M)) to the GDP indicator already embedded in the original UN file
+  mutate("Net Exports" = `Exports` - `Imports`,
+         "Total GDP" = `Net Exports` + `Gross capital formation` + `Government expenditure` + `Household expenditure`,
+         "GDP Difference"= `Total GDP`-`Gross Domestic Product (GDP)`,
+         "GDP Percentage Change"= 100*`GDP Difference`/`Total GDP`)%>%
+
+  #make the table long again to stack the indicators together
+  pivot_longer(cols = 3:12, #using the the columns 2 to 13 to make a long table
+               names_to = "Indicator",
+               values_to = "Values")%>%
+  
+  #filter for the indicators of interest to us
+  filter(Indicator %in% c("Total GDP","Gross Domestic Product (GDP)", "GDP Difference", "GDP Percentage Change")) %>% 
+  pivot_wider(names_from = Years,
+              values_from = Values)
+      
+tidy_GDP_data_7 <-  tidy_GDP_data_6 %>% 
+  filter(Indicator == "GDP Percentage Change") %>% 
+
+  #pivot longer to compare the differences of GDP for the three countries we are interest in
+  pivot_longer(cols = 3:50, #using the the columns 2 to 51 to make a long table
+               names_to = "Years",
+               values_to = "Values")%>%
+  pivot_wider(names_from = Country,
+              values_from = Values)
+  
+  #compute statistics regarding the GDP difference for Germany
+  diff_germany<- tidy_GDP_data_7 %>% 
+  summarise(sample_size=n(),
+            t_critical=qt(0.975,sample_size-1),
+            mean_change_germany=mean(Germany),
+            sd_change_germany=sd(Germany),
+            se_change_germany=sd_change_germany/sqrt(sample_size),
+            lower_ci_95=mean_change_germany-t_critical*se_change_germany,
+            higher_ci_95=mean_change_germany+t_critical*se_change_germany)
+
+  #compute statistics regarding the GDP difference for India
+  diff_india<- tidy_GDP_data_7 %>% 
+  summarise(sample_size=n(),
+            t_critical=qt(0.975,sample_size-1),
+            mean_change_india=mean(India),
+            sd_change_india=sd(India),
+            se_change_india=sd_change_india/sqrt(sample_size),
+            lower_ci_95=mean_change_india-t_critical*se_change_india,
+            higher_ci_95=mean_change_india+t_critical*se_change_india)
+  
+  #compute statistics regarding the GDP difference for the US
+  diff_US<- tidy_GDP_data_7 %>% 
+    summarise(sample_size=n(),
+            t_critical=qt(0.975,sample_size-1),
+            mean_change_US=mean(`United States`),
+            sd_change_US=sd(`United States`),
+            se_change_US=sd_change_US/sqrt(sample_size),
+            lower_ci_95=mean_change_US-t_critical*se_change_US,
+            higher_ci_95=mean_change_US+t_critical*se_change_US)
+
+#print the differences
+diff_germany
+diff_india
+diff_US
+```
+
+From the above, we can see an average difference of 1.11% for Germany, 0.08% for India, and 1.24% for the US, which implies that either the governments typically released underestimates, or we are lacking additional data that would cause such consistent errors.
+
+--> END OF OUR ANSWER <--
+
+```{r gdp2, echo=FALSE, out.width="100%", cache=TRUE}
+knitr::include_graphics(here::here("images", "gdp2.png"), error = FALSE)
+```
+
+
+```{r gdp2_plot_2, out.width="100%", cache=TRUE}
+#create a vector of the of indicators which we will then widen in our pivot_wider
+indicator_list_2 <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports")
+
+#create a vector of the proportion of each GDP component which we will then lengthen in our pivot_longer. 
+#Note: we add a space after each GDP component weight' name to differentiate them of the indicators that already exist while having them display the same way.
+indicator_list_3 <- c("Gross capital formation ", "Net Exports ", "Government expenditure ", "Household expenditure ")
+
+#create a new dataframe for the dataframe already filtered with Germany, India and the US
+tidy_GDP_data_4 <- tidy_GDP_data_3 %>%
+  
+  #filter for the indicators that are of interest to us
+  filter(Indicator %in% indicator_list_2) %>%
+  
+  #pivot wider with the indicators we filtered to then compute the Net Exports and the proportion of GDP component
+  pivot_wider(names_from = Indicator,
+              values_from = Values) %>%
+  
+  #compute the Net Exports, the total GDP and the weights of each GDP component in the total GDP.
+  mutate("Net Exports" = `Exports` - `Imports`,
+         "Total GDP" = `Net Exports` + `Gross capital formation` + `Government expenditure` + `Household expenditure`,
+         "Gross capital formation " = `Gross capital formation`/`Total GDP`,
+         "Government expenditure " = `Government expenditure`/`Total GDP`,
+         "Net Exports " = `Net Exports`/`Total GDP`,
+         "Household expenditure " = `Household expenditure`/`Total GDP`)%>%
+
+  #make the table long again to be able to plot the weights of each GDP component
+  pivot_longer(cols = 4:13, #using the the columns 2 to 13 to make a long table
+               names_to = "Indicator",
+               values_to = "Values")%>%
+  filter(Indicator %in% indicator_list_3)
+
+#load the dataframe that contains the new variable Net Exports and the weights of the 4 variables 
+tidy_GDP_data_4 %>%
+ggplot(aes(x = Years, y = Values, colour = Indicator))+
+  
+  #create a line graph, group by month and remove the legend 
+  geom_line(aes(group=Indicator))+
+  
+  #facet by country
+  facet_wrap(~Country,ncol=3)+
+  
+  #change our y-axis for percentage
+  scale_y_continuous(labels = scales::percent)+
+
+  #set the proper theme and titles
+  theme_bw()+
+  labs(title="GDP and its breakdown at constant 2010 prices in US Dollars",
+       color = "",
+       y="proportion",
+       x="",
+       caption="Source: United Nations, https://unstats.un.org/unsd/naama/Downloads")+
+  
+  #remove the legend's title
+  scale_color_discrete(name="")
+```
+
+
+cache 
+
+--> OUR ANSWER BELOW <--
+
+Regarding Germany, household expenditure contributes the most to the Country’s GDP during 1970 to 2016 followed by exports and imports. The government expenditure and gross capital formation reported the same trends with a very small growth during the period. Concerning India, household expenditure also accounts the most of its GDP and showed an increasing trend since 1970.  Other contributors reported flat trends during 1970 to 2000 and started to grow after that. The U.S.’s GDP reported a substantially growth comparing to the other two countries especially on household expenditures that increased almost five times during the periods.
+
+--> END OF OUR ANSWER <--
+
+
+> If you want to, please change `country_list <- c("United States","India", "Germany")` to include your own country and compare it with any two other countries you like
+
+--> OUR ANSWER BELOW <---
+
+We plotted below a chart to analyse the breakdown of each of our countries' GDP (China, Norway, United Kingdom, Thailand, Italy and France).
+
+--> END OF OUR ANSWER <---
+
+```{r gdp_plot_3, cache=TRUE}
+#creating vector of the new countries we want to analyse
+country_list_2 <- c("China", "Norway", "United Kingdom", "Thailand", "Italy", "France")
+
+#create a vector of the of indicators which we will then widen in our pivot_wider
+indicator_list_2 <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports")
+
+#create a vector of the proportion of each GDP component which we will then lengthen in our pivot_longer. 
+#Note: we add a space after each GDP component weight' name to differentiate them of the indicators that already exist while having them display the same way.
+indicator_list_3 <- c("Gross capital formation ", "Net Exports ", "Government expenditure ", "Household expenditure ")
+
+#create a new dataframe for the dataframe already filtered with Germany, India and the US
+tidy_GDP_data_5 <- tidy_GDP_data %>%
+  
+  #filter for the indicators that are of interest to us
+  filter(Country %in% country_list_2) %>%
+  filter(Indicator %in% indicator_list_2) %>%
+  
+  #pivot wider with the indicators we filtered to then compute the Net Exports and the proportion of GDP component
+  pivot_wider(names_from = Indicator,
+              values_from = Values) %>%
+  
+  #compute the Net Exports, the total GDP and the weights of each GDP component in the total GDP.
+  mutate("Net Exports" = `Exports` - `Imports`,
+         "Total GDP" = `Net Exports` + `Gross capital formation` + `Government expenditure` + `Household expenditure`,
+         "Gross capital formation " = `Gross capital formation`/`Total GDP`,
+         "Government expenditure " = `Government expenditure`/`Total GDP`,
+         "Net Exports " = `Net Exports`/`Total GDP`,
+         "Household expenditure " = `Household expenditure`/`Total GDP`)%>%
+
+  #make the table long again to be able to plot the weights of each GDP component
+  pivot_longer(cols = 4:13, #using the the columns 2 to 13 to make a long table
+               names_to = "Indicator",
+               values_to = "Values")%>%
+  filter(Indicator %in% indicator_list_3)
+
+#load the dataframe that contains the new variable Net Exports and the weights of the 4 variables 
+tidy_GDP_data_5 %>%
+ggplot(aes(x = Years, y = Values, colour = Indicator))+
+  
+  #create a line graph, group by month and remove the legend 
+  geom_line(aes(group=Indicator))+
+  
+  #facet by country
+  facet_wrap(~Country,ncol=3)+
+  
+  #change our y-axis for percentage
+  scale_y_continuous(labels = scales::percent)+
+
+  #set the proper theme and titles
+  theme_bw()+
+  labs(title="GDP and its breakdown at constant 2010 prices in US Dollars",
+       color = "",
+       y="proportion",
+       x="",
+       caption="Source: United Nations, https://unstats.un.org/unsd/naama/Downloads")+
+  
+  #remove the legend's title
+  scale_color_discrete(name="")
+```
+
+
+# Deliverables
+
+There is a lot of explanatory text, comments, etc. You do not need these, so delete them and produce a stand-alone document that you could share with someone. Knit the edited and completed R Markdown file as an HTML document (use the "Knit" button at the top of the script editor window) and upload it to Canvas.
+
+# Details
+
+- Who did you collaborate with: Only our study group B9 (Sherington AMARAPALA, Gianmaria BARTOCCIONI, Metavee LUANGTHAWORNKUL, Keshav MAHENDRA, Hadrien PISTRE, Cissie XU).
+- Approximately how much time did you spend on this problem set: 25 hours
+- What, if anything, gave you the most trouble: No task took us more time that the other tasks.
+
+
+**Please seek out help when you need it,** and remember the [15-minute rule](https://mfa2022.netlify.app/syllabus/#the-15-minute-rule){target=_blank}. You know enough R (and have enough examples of code from class and your readings) to be able to do this. If you get stuck, ask for help from others, post a question on Slack-- and remember that I am here to help too!  
+
+> As a true test to yourself, do you understand the code you submitted and are you able to explain it to someone else? 
+
+
+# Rubric
+
+Check minus (1/5): Displays minimal effort. Doesn't complete all components. Code is poorly written and not documented. Uses the same type of plot for each graph, or doesn't use plots appropriate for the variables being analyzed. 
+
+Check (3/5): Solid effort. Hits all the elements. No clear mistakes. Easy to follow (both the code and the output). 
+
+Check plus (5/5): Finished all components of the assignment correctly and addressed both challenges. Code is well-documented (both self-documented and with additional comments as necessary). Used tidyverse, instead of base R. Graphs and tables are properly labelled. Analysis is clear and easy to follow, either because graphs are labeled clearly or you've written additional text to describe how you interpret the output.
