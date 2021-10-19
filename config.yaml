@@ -85,17 +85,17 @@ params:
         title: About me
         url: blogs/metavee
       - image: pic15.jpg
-        subtitle: My first R assignment -  making graph with ggplot
+        subtitle: My first R assignment -  making graph with ggplot()
         title: Risk Return of DJIA Industrial Average
         url: blogs/assignment_one
       - image: pic07.jpg
         subtitle: My second R assignment -  a more beautiful graph with geom_ribbon
         title: Excess rentals in Transport for London bike sharing
         url: blogs/assignment_two
-      - image: pic04.jpg
-        subtitle: Nisl Sed Aliquam
-        title: Ipsum
-        url: blogs/ipsum
+      - image: pic09.jpg
+        subtitle: My third R assignment -  introducing to ggpairs() to create a scatterplot and correlation matrix
+        title: Pay Discrimination 
+        url: blogs/assignment_three
       - image: pic05.jpg
         subtitle: My greatest achievement 
         title: A Private Equity Analyst in Bangkok 
