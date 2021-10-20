@@ -34,7 +34,7 @@ params:
     text: Please visit [this page](/)
   favicon: favicon.ico
   footer:
-    copyright: Company Name
+    copyright: 2021 Metavee Luangthawornkul · The blogdown package · Academic theme by Hugo 
     enable: yes
     quicklinks:
       - alt: HTML5 UP
@@ -70,13 +70,9 @@ params:
         url: '#'
       - name: Blogs
         url: blogs
-      - name: Generic Blog
-        url: blogs/ipsum
-      - name: Elements
-        url: elements.html
     menu: Menu
     subtitle: By HTML5 Up
-    title: blog
+    title: metavee
   tiles:
     enable: yes
     showcase:
@@ -105,8 +101,10 @@ params:
         title: A Private Equity Analyst in Bangkok
         url: blogs/private_equity
   two:
-    buttonText: More About Me!
+    buttonText: Home
     enable: yes
-    subtitle: "a beautiful day starts with a beautiful mindset"
-    title: Thank you!
-    url: blogs
+    subtitle: " 'One can best prepare themselves for the economic future by 
+    investing in your own education. If you study hard and learn at a young age, 
+    you will be in the best circumstances to secure your future.' - Warren Buffett "
+    title: Thank you
+    
