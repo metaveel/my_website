@@ -61,7 +61,7 @@ params:
   navigation:
     button1:
       - name: More about me
-        url: blogs
+        url: '#'
     button2:
       - name: Log In
         url: '#'
@@ -69,7 +69,7 @@ params:
       - name: Home
         url: '#'
       - name: Blogs
-        url: blogs
+        url: '#'
     menu: Menu
     subtitle: By HTML5 Up
     title: metavee
