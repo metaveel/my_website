@@ -46,7 +46,7 @@ library(openintro)
 library(tinytex)
 ```
 
-The following graphs are about Yields on US rates as well as inverted yield curve and its predictive power with respect to recessions. Many articles and commentators think that, e.g., [*Yield curve inversion is viewed as a harbinger of recession*](https://www.bloomberg.com/news/articles/2019-08-14/u-k-yield-curve-inverts-for-first-time-since-financial-crisis). One can always doubt whether inversions are truly a harbinger of recessions, and [use the attached parable on yield curve inversions](https://twitter.com/5_min_macro/status/1161627360946511873).
+The following graphs are part of my third R assignment. They are about Yields on US rates as well as inverted yield curve and its predictive power with respect to recessions. Many articles and commentators think that, e.g., [*Yield curve inversion is viewed as a harbinger of recession*](https://www.bloomberg.com/news/articles/2019-08-14/u-k-yield-curve-inverts-for-first-time-since-financial-crisis). One can always doubt whether inversions are truly a harbinger of recessions, and [use the attached parable on yield curve inversions](https://twitter.com/5_min_macro/status/1161627360946511873).
 
 
 In our case we will look at US data and use the [FRED database](https://fred.stlouisfed.org/) to download historical yield curve rates, and plot the yield curves since 1999 to see when the yield curves flatten. 
@@ -71,7 +71,7 @@ Our dataframe `yield_curve` has five columns (variables):
 
 ## Plotting the yield curve 
 
-We will produce the following three graphs!
+We will produce the following three graphs...
 
 ### Yields on US rates by duration since 1960
 

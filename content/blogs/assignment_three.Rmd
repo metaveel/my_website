@@ -54,7 +54,7 @@ At the last board meeting of Omega Group Plc., the headquarters of a large multi
 We are asked to carry out the analysis. The objective is to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
 
 
-Loading the data
+We start off by loading the data
 
 
 ```{r load_omega_data, cache=TRUE}
@@ -65,7 +65,7 @@ skim(omega)
 
 ## Relationship Salary - Gender ?
 
-The data frame `omega`  contains the salaries for the sample of 50 executives in the company. We are trying to conclude whether there is a significant difference between the salaries of the male and female executives?
+The data frame `omega`  contains the salaries for the sample of 50 executives in the company. We are trying to conclude whether there is a significant difference between the salaries of the male and female executives.
 
 We will perform different types of analyses as follow, and check whether they all lead to the same conclusion.
 

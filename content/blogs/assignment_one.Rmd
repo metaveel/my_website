@@ -220,7 +220,7 @@ myStocks_returns_monthly %>% #We take the relevant dataset.
 
 
 
-**What can we infer from this plot and which stock is the riskiest/least risky?**
+> What can we infer from this plot and which stock is the riskiest/least risky?
 
 From this plot and a table ranking the stock by the standard deviation of their monthly returns, we can see that the stock BA is the riskiest, whereas the stock VZ is the least risky.
 
@@ -252,7 +252,7 @@ theme(plot.title = element_text(size = 14, face = "bold", hjust = .5),
 NULL
 ```
 
-**What can you we infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?**
+> What can you we infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?
 
 The graph plots each stock's standard deviations against their expected returns. The stocks in the fourth quadrant (bottom right) of the graph have both the highest SD, hence the highest beta, and the lowest historic returns. We would expect these stocks to be poor investments, as they are those that bear the highest risk and the lowest expected returns.
 

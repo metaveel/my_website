@@ -123,9 +123,9 @@ and calculated between 2016-2019",
 
 ```
 
-**Look at May and Jun and compare 2020 with the previous years. What's happening?**
+> Look at May and Jun and compare 2020 with the previous years. What's happening?
 
-Looking at the facet grid chart with the number of bikes hired by month and year, we see a much smaller peak in May and June 2020 compared to previous years. What we see is that number of days with a high number of rentals, aprx. 30-50k is much less than previous years. The number of bikes rented each day is much more inconsistent and varies along the entire spectrum. This is a result of COVID lockdown, where bike usage patterns changed. We see that the rentals take up again in July, when lockdown was lifted, and the distribution starts to normalize. 
+Looking at the facet grid chart with the number of bikes hired by month and year, we see a much smaller peak in May and June 2020 compared to previous years. What we see is that number of days with a high number of rentals, approximately 30-50k is much less than previous years. The number of bikes rented each day is much more inconsistent and varies along the entire spectrum. This is a result of COVID lockdown, where bike usage patterns changed. We see that the rentals take up again in July, when lockdown was lifted, and the distribution starts to normalize. 
 
 We are creating the second plot:
 
@@ -176,7 +176,7 @@ calculated between 2016-2019",
 ```
 
 
-**Should you use the mean or the median to calculate your expected rentals? Why?**
+> Should you use the mean or the median to calculate your expected rentals? Why?
 
 We use mean because we are looking at normal distributions. The mean is often heavily influenced by outliers, however, our data does not contain outliers. The median is usually used for skewed distributions or data with many outliers. The expected outcome value is often referred to as the “long-term” average or mean. Over the long term of doing sampling over and over, you would expect this average. 
 

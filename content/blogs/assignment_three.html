@@ -20,7 +20,7 @@ title: Omega Group plc- Pay Discrimination
 <p>The following content and graphs are about the pay discrimination between women and men at Omega Group plc</p>
 <p>At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about £8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted.</p>
 <p>We are asked to carry out the analysis. The objective is to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor.</p>
-<p>Loading the data</p>
+<p>We start off by loading the data</p>
 <pre class="r"><code>omega &lt;- read_csv(here::here(&quot;data&quot;, &quot;omega.csv&quot;))
 glimpse(omega) # examine the data frame</code></pre>
 <pre><code>## Rows: 50
@@ -146,7 +146,7 @@ glimpse(omega) # examine the data frame</code></pre>
 </div>
 <div id="relationship-salary---gender" class="section level2">
 <h2>Relationship Salary - Gender ?</h2>
-<p>The data frame <code>omega</code> contains the salaries for the sample of 50 executives in the company. We are trying to conclude whether there is a significant difference between the salaries of the male and female executives?</p>
+<p>The data frame <code>omega</code> contains the salaries for the sample of 50 executives in the company. We are trying to conclude whether there is a significant difference between the salaries of the male and female executives.</p>
 <p>We will perform different types of analyses as follow, and check whether they all lead to the same conclusion.</p>
 <p>. Confidence intervals
 . Hypothesis testing
